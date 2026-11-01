@@ -1,0 +1,2704 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>news-api — Free, No-Key News JSON</title>
+  <meta name="description" content="Free, open-source news JSON scraped every two hours and committed to GitHub. Zero API keys, zero rate-limit tokens, fetch directly from raw.githubusercontent.com.">
+  
+  <!-- Preconnect and Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ----------------------------------------------------
+       UNSLOP DESIGN SYSTEM & EDITORIAL WARM NEUTRAL RAMP
+       ---------------------------------------------------- */
+    :root {
+      /* 4px Base Rhythm */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+
+      /* Radii: Nested Math (Inner = Outer - Padding) */
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+
+      /* Typography */
+      --font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+
+      /* Animation Curve */
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      --duration-fast: 140ms;
+      --duration-normal: 220ms;
+    }
+
+    /* Light Theme (Warm Newspaper Broadsheet Ramp) */
+    html, html[data-theme="light"] {
+      --bg-page: #f7f4ee;
+      --bg-card: #fdfbf7;
+      --bg-raised: #efe9df;
+      --bg-subtle: #f2ebe0;
+      --bg-code: #ece5d8;
+      
+      --text-primary: #1f1b16;
+      --text-secondary: #5e554a;
+      --text-muted: #7b7266;
+      
+      --border-hairline: rgba(31, 27, 22, 0.09);
+      --border-subtle: rgba(31, 27, 22, 0.16);
+      --border-hover: rgba(31, 27, 22, 0.30);
+      
+      --accent: #b45309;
+      --accent-hover: #92400e;
+      --accent-subtle: rgba(180, 83, 9, 0.08);
+      --accent-contrast: #ffffff;
+      
+      --status-updated: #15803d;
+      --status-updated-bg: rgba(21, 128, 61, 0.09);
+      --status-retained: #b45309;
+      --status-retained-bg: rgba(180, 83, 9, 0.1);
+      --status-error: #b91c1c;
+      --status-error-bg: rgba(185, 28, 28, 0.1);
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(31, 27, 22, 0.05);
+      
+      color-scheme: light;
+    }
+
+    /* Dark Theme (Warm Night Broadsheet Ramp) */
+    html[data-theme="dark"] {
+      --bg-page: #161513;
+      --bg-card: #1c1a18;
+      --bg-raised: #262421;
+      --bg-subtle: #12110f;
+      --bg-code: #100f0e;
+      
+      --text-primary: #efe9de;
+      --text-secondary: #aaa398;
+      --text-muted: #8a847a;
+      
+      --border-hairline: rgba(239, 233, 222, 0.08);
+      --border-subtle: rgba(239, 233, 222, 0.14);
+      --border-hover: rgba(239, 233, 222, 0.28);
+      
+      --accent: #e0682b;
+      --accent-hover: #f97316;
+      --accent-subtle: rgba(224, 104, 43, 0.14);
+      --accent-contrast: #161513;
+      
+      --status-updated: #4cc38a;
+      --status-updated-bg: rgba(76, 195, 138, 0.12);
+      --status-retained: #e08a2b;
+      --status-retained-bg: rgba(224, 138, 43, 0.12);
+      --status-error: #e5484d;
+      --status-error-bg: rgba(229, 72, 77, 0.12);
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.45);
+      
+      color-scheme: dark;
+    }
+
+    /* System Match When Auto */
+    @media (prefers-color-scheme: dark) {
+      html[data-theme="auto"] {
+        --bg-page: #161513;
+        --bg-card: #1c1a18;
+        --bg-raised: #262421;
+        --bg-subtle: #12110f;
+        --bg-code: #100f0e;
+        
+        --text-primary: #efe9de;
+        --text-secondary: #aaa398;
+        --text-muted: #8a847a;
+        
+        --border-hairline: rgba(239, 233, 222, 0.08);
+        --border-subtle: rgba(239, 233, 222, 0.14);
+        --border-hover: rgba(239, 233, 222, 0.28);
+        
+        --accent: #e0682b;
+        --accent-hover: #f97316;
+        --accent-subtle: rgba(224, 104, 43, 0.14);
+        --accent-contrast: #161513;
+        
+        --status-updated: #4cc38a;
+        --status-updated-bg: rgba(76, 195, 138, 0.12);
+        --status-retained: #e08a2b;
+        --status-retained-bg: rgba(224, 138, 43, 0.12);
+        --status-error: #e5484d;
+        --status-error-bg: rgba(229, 72, 77, 0.12);
+
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.45);
+        
+        color-scheme: dark;
+      }
+    }
+
+    /* ----------------------------------------------------
+       RESET & BASE ELEMENTS
+       ---------------------------------------------------- */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.5;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, input, select {
+      font: inherit;
+      color: inherit;
+      border: none;
+      background: none;
+      outline: none;
+    }
+
+    button {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tabular {
+      font-variant-numeric: tabular-nums;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 var(--space-4);
+      }
+    }
+
+    .icon {
+      width: 16px;
+      height: 16px;
+      stroke-width: 1.5;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      display: inline-block;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    /* ----------------------------------------------------
+       EDITION MASTHEAD / TOP BAR
+       ---------------------------------------------------- */
+    .masthead-strip {
+      border-bottom: 1px solid var(--border-hairline);
+      background-color: var(--bg-subtle);
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: var(--space-2) 0;
+    }
+
+    .masthead-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    .masthead-dateline {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .masthead-divider {
+      opacity: 0.4;
+    }
+
+    .masthead-telemetry {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--status-updated);
+      display: inline-block;
+    }
+
+    /* ----------------------------------------------------
+       PRIMARY HEADER & NAVIGATION
+       ---------------------------------------------------- */
+    .site-header {
+      border-bottom: 1px solid var(--border-hairline);
+      background-color: var(--bg-card);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      gap: var(--space-4);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 21px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 1px 6px;
+      background: var(--bg-raised);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-hairline);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      list-style: none;
+    }
+
+    .nav-link {
+      font-size: 14px;
+      color: var(--text-secondary);
+      transition: color var(--duration-fast) var(--ease);
+      padding: var(--space-1) 0;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-hairline);
+      background-color: var(--bg-raised);
+      transition: background-color var(--duration-fast) var(--ease),
+                  color var(--duration-fast) var(--ease),
+                  border-color var(--duration-fast) var(--ease);
+    }
+
+    .icon-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      height: 32px;
+      padding: 0 var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      background-color: var(--bg-raised);
+      border: 1px solid var(--border-hairline);
+      transition: border-color var(--duration-fast) var(--ease);
+    }
+
+    .github-link:hover {
+      border-color: var(--border-hover);
+    }
+
+    @media (max-width: 820px) {
+      .nav-links {
+        display: none;
+      }
+    }
+
+    /* ----------------------------------------------------
+       HERO SECTION
+       ---------------------------------------------------- */
+    .hero-section {
+      padding: var(--space-16) 0 var(--space-12) 0;
+      border-bottom: 1px solid var(--border-hairline);
+      position: relative;
+    }
+
+    .hero-pretitle {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: var(--space-3);
+      font-family: var(--font-mono);
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(34px, 5.5vw, 54px);
+      font-weight: 500;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      max-width: 880px;
+      margin-bottom: var(--space-4);
+    }
+
+    .hero-subhead {
+      font-size: clamp(16px, 1.8vw, 18px);
+      line-height: 1.5;
+      color: var(--text-secondary);
+      max-width: 720px;
+      margin-bottom: var(--space-8);
+    }
+
+    .hero-snippet-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      max-width: 760px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-10);
+    }
+
+    .snippet-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .snippet-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-family: var(--font-mono);
+    }
+
+    .snippet-cmd-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      background-color: var(--bg-code);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: var(--space-2) var(--space-3);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-primary);
+      overflow-x: auto;
+    }
+
+    .snippet-cmd-text {
+      flex: 1;
+      white-space: nowrap;
+      user-select: all;
+    }
+
+    .btn-copy {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: 4px 8px;
+      background: var(--bg-raised);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: var(--text-secondary);
+      transition: all var(--duration-fast) var(--ease);
+      white-space: nowrap;
+    }
+
+    .btn-copy:hover {
+      color: var(--text-primary);
+      border-color: var(--border-hover);
+    }
+
+    .btn-copy.copied {
+      color: var(--status-updated);
+      border-color: var(--status-updated);
+    }
+
+    .hero-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      border-top: 1px solid var(--border-hairline);
+      padding-top: var(--space-6);
+    }
+
+    .stat-cell {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .stat-num {
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+      .hero-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-6) var(--space-4);
+      }
+    }
+
+    /* ----------------------------------------------------
+       SECTION HEADINGS & SHELLS
+       ---------------------------------------------------- */
+    .section-wrap {
+      padding: var(--space-16) 0;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+      flex-wrap: wrap;
+    }
+
+    .section-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 620px;
+    }
+
+    /* ----------------------------------------------------
+       LIVE DEMO NEWS READER
+       ---------------------------------------------------- */
+    .reader-frame {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .reader-toolbar {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-hairline);
+      background-color: var(--bg-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .toolbar-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .segmented-group {
+      display: inline-flex;
+      background-color: var(--bg-raised);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .seg-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      transition: all var(--duration-fast) var(--ease);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .seg-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .seg-btn.active {
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-hairline);
+    }
+
+    .format-switcher {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .toggle-select {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+
+    .category-tabs {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+
+    .category-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cat-tab {
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      transition: all var(--duration-fast) var(--ease);
+      border: 1px solid transparent;
+    }
+
+    .cat-tab:hover {
+      color: var(--text-primary);
+      background-color: var(--bg-raised);
+    }
+
+    .cat-tab.active {
+      color: var(--text-primary);
+      background-color: var(--bg-card);
+      border-color: var(--border-hairline);
+      font-weight: 500;
+    }
+
+    .reader-status-bar {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--border-hairline);
+      background-color: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      font-size: 12px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .endpoint-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-secondary);
+      background-color: var(--bg-raised);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-hairline);
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .reader-metrics {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      font-family: var(--font-mono);
+    }
+
+    .reader-filter-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .reader-filter-input {
+      padding: 4px 8px 4px 28px;
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      background-color: var(--bg-raised);
+      color: var(--text-primary);
+      width: 160px;
+      transition: width var(--duration-fast) var(--ease), border-color var(--duration-fast) var(--ease);
+    }
+
+    .reader-filter-input:focus {
+      width: 220px;
+      border-color: var(--border-hover);
+    }
+
+    .filter-icon-pos {
+      position: absolute;
+      left: 8px;
+      pointer-events: none;
+      color: var(--text-muted);
+    }
+
+    .articles-container {
+      padding: var(--space-6);
+      min-height: 380px;
+    }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--space-6);
+    }
+
+    .article-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: var(--space-3);
+      transition: border-color var(--duration-fast) var(--ease), box-shadow var(--duration-fast) var(--ease);
+      position: relative;
+    }
+
+    .article-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .article-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .article-source-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background-color: var(--bg-raised);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-hairline);
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .article-time {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .article-headline {
+      font-family: var(--font-serif);
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 1.25;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+
+    .article-headline:hover {
+      color: var(--accent);
+    }
+
+    .article-excerpt {
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .article-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--space-2);
+      border-top: 1px solid var(--border-hairline);
+      font-size: 12px;
+      margin-top: auto;
+    }
+
+    .article-author {
+      color: var(--text-muted);
+      font-size: 11px;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .article-link-out {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      transition: color var(--duration-fast) var(--ease);
+    }
+
+    .article-link-out:hover {
+      color: var(--accent);
+    }
+
+    .skeleton-card {
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      background-color: var(--bg-card);
+    }
+
+    .skeleton-line {
+      height: 14px;
+      background-color: var(--bg-raised);
+      border-radius: var(--radius-sm);
+    }
+
+    .skeleton-pulse {
+      animation: pulse-shimmer 1.8s infinite ease-in-out;
+    }
+
+    @keyframes pulse-shimmer {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    .state-banner {
+      padding: var(--space-12) var(--space-6);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-3);
+    }
+
+    .state-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--text-primary);
+    }
+
+    .state-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      max-width: 460px;
+    }
+
+    .btn-retry {
+      margin-top: var(--space-2);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-raised);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .btn-retry:hover {
+      border-color: var(--border-hover);
+    }
+
+    /* ----------------------------------------------------
+       DATA STATUS & FRESHNESS PANEL
+       ---------------------------------------------------- */
+    .status-panel-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .status-summary-bar {
+      padding: var(--space-5) var(--space-6);
+      background-color: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-hairline);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .summary-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .summary-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .summary-val {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .status-filter-bar {
+      padding: var(--space-3) var(--space-6);
+      border-bottom: 1px solid var(--border-hairline);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .status-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .status-table th {
+      padding: var(--space-3) var(--space-6);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-hairline);
+      background-color: var(--bg-card);
+      white-space: nowrap;
+    }
+
+    .status-table td {
+      padding: var(--space-3) var(--space-6);
+      border-bottom: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .status-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-table tr:hover td {
+      background-color: var(--bg-subtle);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 500;
+      font-family: var(--font-mono);
+    }
+
+    .status-badge.updated {
+      background-color: var(--status-updated-bg);
+      color: var(--status-updated);
+    }
+
+    .status-badge.retained {
+      background-color: var(--status-retained-bg);
+      color: var(--status-retained);
+    }
+
+    .provider-pill {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 1px 5px;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-raised);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-secondary);
+      margin-right: 4px;
+    }
+
+    .diagnostics-box {
+      margin-top: var(--space-4);
+      padding: var(--space-4);
+      background-color: var(--bg-raised);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      font-size: 12px;
+    }
+
+    .diag-title {
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .diag-list {
+      list-style: none;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* ----------------------------------------------------
+       API DOCUMENTATION & CODE GENERATOR
+       ---------------------------------------------------- */
+    .docs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+    }
+
+    @media (max-width: 960px) {
+      .docs-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .endpoints-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    .endpoint-item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding-bottom: var(--space-4);
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .endpoint-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .endpoint-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
+
+    .method-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      background-color: var(--bg-raised);
+      border: 1px solid var(--border-hairline);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      color: var(--accent);
+    }
+
+    .endpoint-url-code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-primary);
+      word-break: break-all;
+    }
+
+    .endpoint-explain {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .code-generator-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .code-tabs-header {
+      background-color: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-hairline);
+      padding: var(--space-2) var(--space-4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .lang-tabs {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .lang-tab {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .lang-tab.active {
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-hairline);
+    }
+
+    .code-body-pre {
+      padding: var(--space-5);
+      background-color: var(--bg-code);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-primary);
+      overflow-x: auto;
+      margin: 0;
+      flex: 1;
+    }
+
+    /* Reference Directory Grid (Countries & Categories) */
+    .reference-tables-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin-top: var(--space-6);
+    }
+
+    @media (max-width: 768px) {
+      .reference-tables-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ref-table-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .ref-table-header {
+      padding: var(--space-3) var(--space-4);
+      background-color: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-hairline);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .ref-table th, .ref-table td {
+      padding: var(--space-2) var(--space-4);
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .ref-table th {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .ref-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .schema-preview-box {
+      margin-top: var(--space-6);
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4) var(--space-5);
+    }
+
+    .schema-preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .schema-code-block {
+      margin-top: var(--space-3);
+      padding: var(--space-4);
+      background-color: var(--bg-code);
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.5;
+      overflow-x: auto;
+    }
+
+    /* ----------------------------------------------------
+       HOW IT WORKS & ARCHITECTURE
+       ---------------------------------------------------- */
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+
+    @media (max-width: 860px) {
+      .arch-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .arch-step-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .arch-step-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .arch-step-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .arch-step-desc {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-secondary);
+    }
+
+    .guarantees-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .guarantee-card {
+      padding: var(--space-4);
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-hairline);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .guarantee-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .guarantee-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* ----------------------------------------------------
+       FOOTER
+       ---------------------------------------------------- */
+    .site-footer {
+      padding: var(--space-12) 0 var(--space-8) 0;
+      background-color: var(--bg-subtle);
+      border-top: 1px solid var(--border-hairline);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: var(--space-8);
+      margin-bottom: var(--space-8);
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .footer-heading {
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      color: var(--text-primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border-hairline);
+      padding-top: var(--space-6);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Masthead Dateline Strip -->
+  <div class="masthead-strip">
+    <div class="container masthead-inner">
+      <div class="masthead-dateline">
+        <span id="masthead-date" class="tabular">Loading edition...</span>
+        <span class="masthead-divider">·</span>
+        <span>Public Static News JSON Archive</span>
+        <span class="masthead-divider">·</span>
+        <span>Scraped every 2h via GitHub Actions</span>
+      </div>
+      <div class="masthead-telemetry">
+        <span class="live-dot" id="live-indicator-dot"></span>
+        <span id="live-indicator-text" class="tabular">Checking pipeline...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand-group">
+        <a href="#" class="brand-title">news-api</a>
+        <span class="brand-tag">raw.githubusercontent.com</span>
+      </div>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#reader" class="nav-link">Live Reader</a></li>
+          <li><a href="#endpoints" class="nav-link">Endpoints</a></li>
+          <li><a href="#docs" class="nav-link">Docs &amp; Snippets</a></li>
+          <li><a href="#status" class="nav-link">Feed Health</a></li>
+          <li><a href="#architecture" class="nav-link">How It Works</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle-btn" class="icon-btn" title="Toggle color theme (Light / Dark / System)" aria-label="Toggle theme">
+          <svg class="icon" viewBox="0 0 24 24" id="theme-icon">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+          </svg>
+        </button>
+
+        <!-- GitHub Repository Link -->
+        <a href="https://github.com/pranav256/news-api" target="_blank" rel="noopener noreferrer" class="github-link">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-pretitle">
+        <span>EST. 2026</span>
+        <span>·</span>
+        <span>NO API KEYS REQUIRED</span>
+        <span>·</span>
+        <span>ZERO RATE-LIMIT GATES</span>
+      </div>
+
+      <h1 class="hero-title">Free, no-key news JSON, refreshed every two hours</h1>
+
+      <p class="hero-subhead">
+        A serverless pipeline scrapes NewsAPI and national RSS feeds every 120 minutes, committing clean, deduplicated JSON directly into GitHub. Fetch headline feeds straight from <code>raw.githubusercontent.com</code> without authentication tokens or servers.
+      </p>
+
+      <!-- Copyable Root Endpoint Box -->
+      <div class="hero-snippet-box">
+        <div class="snippet-top">
+          <div class="snippet-meta">
+            <span>GET</span>
+            <span>·</span>
+            <span>CORS: *</span>
+            <span>·</span>
+            <span>NewsAPI compatible schema</span>
+          </div>
+          <span class="tabular" id="hero-feed-preview-label">US General News</span>
+        </div>
+        <div class="snippet-cmd-bar">
+          <span class="snippet-cmd-text" id="hero-url-text">https://raw.githubusercontent.com/pranav256/news-api/main/us/general.json</span>
+          <button class="btn-copy" id="hero-copy-btn" data-clipboard-target="#hero-url-text">
+            <svg class="icon" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <span class="btn-copy-label">Copy URL</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Pipeline Telemetry Strip -->
+      <div class="hero-stats-grid">
+        <div class="stat-cell">
+          <div class="stat-num tabular" id="hero-stat-feeds">21</div>
+          <div class="stat-label">Active feeds across 3 countries</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num tabular" id="hero-stat-interval">2h</div>
+          <div class="stat-label">Automated cron refresh interval</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num tabular">0</div>
+          <div class="stat-label">API keys or signups required</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num tabular">100%</div>
+          <div class="stat-label">Direct browser CORS support</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Live News Reader -->
+  <section class="section-wrap" id="reader">
+    <div class="container">
+      <div class="section-header-row">
+        <div class="section-title-group">
+          <span class="section-eyebrow">BROADSHEET DEMO</span>
+          <h2 class="section-title">Live News Reader</h2>
+          <p class="section-desc">Client-side reader pulling real-time JSON files directly from GitHub. Select country, topic, and feed schema.</p>
+        </div>
+
+        <!-- Refresh & Refresh Time -->
+        <div style="display:flex; align-items:center; gap:var(--space-3); flex-wrap:wrap;">
+          <span id="reader-refresh-time" class="tabular" style="font-size:12px; color:var(--text-muted);">Loaded live</span>
+          <button id="reader-manual-refresh" class="btn-copy" title="Re-fetch current endpoint">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+            <span>Reload</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Reader Frame -->
+      <div class="reader-frame">
+        <div class="reader-toolbar">
+          <div class="toolbar-row-top">
+            <!-- Country Selector -->
+            <div class="segmented-group" id="country-selector" role="radiogroup" aria-label="Select Country">
+              <button class="seg-btn" data-country="in" role="radio" aria-checked="false">
+                <span>India</span>
+              </button>
+              <button class="seg-btn active" data-country="us" role="radio" aria-checked="true">
+                <span>United States</span>
+              </button>
+              <button class="seg-btn" data-country="gb" role="radio" aria-checked="false">
+                <span>United Kingdom</span>
+              </button>
+            </div>
+
+            <!-- Feed Format Selector -->
+            <div class="format-switcher">
+              <label for="feed-format-select">Endpoint Shape:</label>
+              <select id="feed-format-select" class="toggle-select">
+                <option value="simple">Simple /{country}/{category}.json</option>
+                <option value="headlines">Rich Headlines /data/{country}/{category}_headlines.json</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Category Navigation Tabs -->
+          <div class="category-tabs" id="category-tabs" role="tablist" aria-label="News Categories">
+            <button class="cat-tab active" data-category="general" role="tab" aria-selected="true">General</button>
+            <button class="cat-tab" data-category="business" role="tab" aria-selected="false">Business</button>
+            <button class="cat-tab" data-category="health" role="tab" aria-selected="false">Health</button>
+            <button class="cat-tab" data-category="science" role="tab" aria-selected="false">Science</button>
+            <button class="cat-tab" data-category="sports" role="tab" aria-selected="false">Sports</button>
+            <button class="cat-tab" data-category="technology" role="tab" aria-selected="false">Technology</button>
+            <button class="cat-tab" data-category="entertainment" role="tab" aria-selected="false">Entertainment</button>
+          </div>
+        </div>
+
+        <!-- Live Status & Filter Bar -->
+        <div class="reader-status-bar">
+          <div style="display:flex; align-items:center; gap:var(--space-2); max-width:70%;">
+            <span class="endpoint-pill" id="current-fetch-pill">
+              https://raw.githubusercontent.com/pranav256/news-api/main/us/general.json
+            </span>
+            <button class="btn-copy" id="reader-copy-url-btn" title="Copy endpoint URL">
+              <svg class="icon" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            </button>
+            <a id="reader-raw-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-copy" title="Open raw JSON in new tab">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            </a>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:var(--space-3);">
+            <div class="reader-filter-wrap">
+              <svg class="icon filter-icon-pos" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="reader-search-input" class="reader-filter-input" placeholder="Filter articles..." aria-label="Filter loaded articles">
+            </div>
+            <span class="reader-metrics tabular" id="articles-count-badge">0 articles</span>
+          </div>
+        </div>
+
+        <!-- Article Stream -->
+        <div class="articles-container">
+          <div id="articles-feed" class="articles-grid">
+            <!-- Injected via JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: API Documentation & Code Snippets -->
+  <section class="section-wrap" id="docs">
+    <div class="container">
+      <div class="section-header-row">
+        <div class="section-title-group">
+          <span class="section-eyebrow">INTEGRATION GUIDE</span>
+          <h2 class="section-title">API Endpoints &amp; Code Snippets</h2>
+          <p class="section-desc">Fetch plain JSON from any client, backend script, or static site generator. No headers, tokens, or initialization needed.</p>
+        </div>
+      </div>
+
+      <div class="docs-grid" id="endpoints">
+        <!-- Endpoints Directory -->
+        <div class="endpoints-card">
+          <h3 style="font-family:var(--font-serif); font-size:20px; font-weight:500;">Endpoint Patterns</h3>
+
+          <!-- Pattern 1: Simple Root -->
+          <div class="endpoint-item">
+            <div class="endpoint-title-row">
+              <span class="method-badge">GET</span>
+              <span style="font-size:12px; color:var(--text-muted);">Root NewsAPI Format</span>
+            </div>
+            <code class="endpoint-url-code">https://raw.githubusercontent.com/pranav256/news-api/main/{country}/{category}.json</code>
+            <p class="endpoint-explain">
+              Original Flask-compatible endpoint. Returns standard <code>{ "status": "ok", "totalResults": N, "articles": [...] }</code>.
+            </p>
+          </div>
+
+          <!-- Pattern 2: Rich Headlines -->
+          <div class="endpoint-item">
+            <div class="endpoint-title-row">
+              <span class="method-badge">GET</span>
+              <span style="font-size:12px; color:var(--text-muted);">Rich Headlines Feed</span>
+            </div>
+            <code class="endpoint-url-code">https://raw.githubusercontent.com/pranav256/news-api/main/data/{country}/{category}_headlines.json</code>
+            <p class="endpoint-explain">
+              Combines NewsAPI top headlines and verified national RSS feeds with provider names and refresh timestamp metadata.
+            </p>
+          </div>
+
+          <!-- Pattern 3: Rich Everything (Deep Search) -->
+          <div class="endpoint-item">
+            <div class="endpoint-title-row">
+              <span class="method-badge">GET</span>
+              <span style="font-size:12px; color:var(--text-muted);">Deep Search (5 Categories)</span>
+            </div>
+            <code class="endpoint-url-code">https://raw.githubusercontent.com/pranav256/news-api/main/data/{country}/{category}_everything.json</code>
+            <p class="endpoint-explain">
+              Deep-search results when NewsAPI quota allows, falling back to RSS. Published for <code>business</code>, <code>health</code>, <code>science</code>, <code>sports</code>, <code>technology</code>.
+            </p>
+          </div>
+
+          <!-- Pattern 4: Pipeline Telemetry -->
+          <div class="endpoint-item">
+            <div class="endpoint-title-row">
+              <span class="method-badge">GET</span>
+              <span style="font-size:12px; color:var(--text-muted);">Telemetry &amp; Status</span>
+            </div>
+            <code class="endpoint-url-code">https://raw.githubusercontent.com/pranav256/news-api/main/data/status.json</code>
+            <p class="endpoint-explain">
+              Real-time pipeline health: per-feed status, last successful refresh timestamps, quota usage, and upstream errors.
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive Snippet Generator -->
+        <div class="code-generator-card">
+          <div class="code-tabs-header">
+            <div class="lang-tabs" id="snippet-lang-tabs">
+              <button class="lang-tab active" data-lang="curl">cURL</button>
+              <button class="lang-tab" data-lang="js">JavaScript (fetch)</button>
+              <button class="lang-tab" data-lang="python">Python (requests)</button>
+              <button class="lang-tab" data-lang="go">Go</button>
+            </div>
+            <button class="btn-copy" id="snippet-copy-btn">
+              <svg class="icon" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span>Copy snippet</span>
+            </button>
+          </div>
+
+          <pre class="code-body-pre"><code id="code-snippet-display"># Loading code...</code></pre>
+        </div>
+      </div>
+
+      <!-- Countries & Categories Reference Tables -->
+      <div class="reference-tables-grid">
+        <div class="ref-table-card">
+          <div class="ref-table-header">Supported Countries</div>
+          <table class="ref-table">
+            <thead>
+              <tr>
+                <th>Country</th>
+                <th>Code</th>
+                <th>Coverage Providers</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>India</strong></td>
+                <td><code>in</code></td>
+                <td>RSS (The Hindu, Indian Express, NDTV)</td>
+              </tr>
+              <tr>
+                <td><strong>United States</strong></td>
+                <td><code>us</code></td>
+                <td>NewsAPI Developer Quota + RSS (NYT, Reuters)</td>
+              </tr>
+              <tr>
+                <td><strong>United Kingdom</strong></td>
+                <td><code>gb</code></td>
+                <td>RSS (BBC News, The Guardian, Telegraph)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="ref-table-card">
+          <div class="ref-table-header">Supported Categories</div>
+          <table class="ref-table">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Root JSON</th>
+                <th>Rich Headlines &amp; Deep Search</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>general</code></td>
+                <td>Available (all 3 countries)</td>
+                <td>Headlines feed</td>
+              </tr>
+              <tr>
+                <td><code>business</code></td>
+                <td>Available (all 3 countries)</td>
+                <td>Headlines + Everything feed</td>
+              </tr>
+              <tr>
+                <td><code>health</code></td>
+                <td>Available (all 3 countries)</td>
+                <td>Headlines + Everything feed</td>
+              </tr>
+              <tr>
+                <td><code>science</code></td>
+                <td>Available (all 3 countries)</td>
+                <td>Headlines + Everything feed</td>
+              </tr>
+              <tr>
+                <td><code>sports</code></td>
+                <td>Available (all 3 countries)</td>
+                <td>Headlines + Everything feed</td>
+              </tr>
+              <tr>
+                <td><code>technology</code></td>
+                <td>Available (all 3 countries)</td>
+                <td>Headlines + Everything feed</td>
+              </tr>
+              <tr>
+                <td><code>entertainment</code></td>
+                <td>Available (all 3 countries)</td>
+                <td>Headlines feed</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- JSON Response Schema Accordion -->
+      <div class="schema-preview-box">
+        <div class="schema-preview-header" id="schema-accordion-toggle" role="button" tabindex="0">
+          <span>Verified Response Schema Reference (Simple vs Rich)</span>
+          <svg class="icon" id="schema-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div id="schema-content" style="display:none;">
+          <pre class="schema-code-block"><code>/* Simple Endpoint: /{country}/{category}.json */
+{
+  "status": "ok",                  // string ("ok")
+  "totalResults": 45,              // integer
+  "articles": [
+    {
+      "source": {
+        "id": "the-hindu",         // string | null
+        "name": "The Hindu"        // string (publisher name)
+      },
+      "author": "Vikas Vasudeva",  // string | null (frequently null)
+      "title": "Article Headline", // string
+      "description": "...",        // string | null
+      "url": "https://...",        // string (canonical article link)
+      "urlToImage": "https://...", // string | null (external CDN)
+      "publishedAt": "2026-10-31T23:20:22Z", // ISO-8601 string
+      "content": "..."             // string | null
+    }
+  ]
+}
+
+/* Rich Headlines: /data/{country}/{category}_headlines.json */
+{
+  "source": "news-api",
+  "country": "us",
+  "category": "general",
+  "providers": ["newsapi", "rss"], // array of upstream sources
+  "fetched_at": "2026-11-01T00:29:06.909534+00:00",
+  "articles_count": 45,
+  "articles": [ ... ]
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Data Status & Freshness Panel -->
+  <section class="section-wrap" id="status">
+    <div class="container">
+      <div class="section-header-row">
+        <div class="section-title-group">
+          <span class="section-eyebrow">PIPELINE MONITORING</span>
+          <h2 class="section-title">Feed Freshness &amp; Health</h2>
+          <p class="section-desc">Live status queried from <code>data/status.json</code>. Each feed records its last successful refresh and upstream health.</p>
+        </div>
+
+        <button id="status-refresh-btn" class="btn-copy">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          <span>Refresh Telemetry</span>
+        </button>
+      </div>
+
+      <!-- Main Status Card -->
+      <div class="status-panel-card">
+        <!-- Summary Stats Grid -->
+        <div class="status-summary-bar">
+          <div class="summary-cell">
+            <span class="summary-label">Pipeline Status</span>
+            <span class="summary-val" id="stat-pipe-status">
+              <span class="live-dot" style="background-color:var(--status-updated)"></span>
+              <span id="stat-pipe-text">Online</span>
+            </span>
+          </div>
+          <div class="summary-cell">
+            <span class="summary-label">Feeds Updated</span>
+            <span class="summary-val tabular" id="stat-feeds-updated">21 / 21</span>
+          </div>
+          <div class="summary-cell">
+            <span class="summary-label">Feeds Retained (Stale)</span>
+            <span class="summary-val tabular" id="stat-feeds-retained">0</span>
+          </div>
+          <div class="summary-cell">
+            <span class="summary-label">NewsAPI Requests Used</span>
+            <span class="summary-val tabular" id="stat-newsapi-quota">-- / --</span>
+          </div>
+          <div class="summary-cell">
+            <span class="summary-label">RSS Feeds Succeeded</span>
+            <span class="summary-val tabular" id="stat-rss-success">-- / --</span>
+          </div>
+        </div>
+
+        <!-- Filter / Search Table Bar -->
+        <div class="status-filter-bar">
+          <div style="display:flex; align-items:center; gap:var(--space-2);">
+            <div class="segmented-group" id="status-filter-group">
+              <button class="seg-btn active" data-status-filter="all">All Feeds (21)</button>
+              <button class="seg-btn" data-status-filter="updated">Updated</button>
+              <button class="seg-btn" data-status-filter="retained">Retained</button>
+            </div>
+          </div>
+
+          <div class="reader-filter-wrap">
+            <svg class="icon filter-icon-pos" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="status-search-input" class="reader-filter-input" placeholder="Search country / category..." aria-label="Search status table">
+          </div>
+        </div>
+
+        <!-- Telemetry Table -->
+        <div class="table-container">
+          <table class="status-table" aria-label="Feeds Health Table">
+            <thead>
+              <tr>
+                <th>Country</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Providers</th>
+                <th>Articles Count</th>
+                <th>Last Refresh</th>
+                <th>Raw File</th>
+              </tr>
+            </thead>
+            <tbody id="status-table-body">
+              <tr>
+                <td colspan="7" style="text-align:center; padding:var(--space-8); color:var(--text-muted);">
+                  Fetching telemetry matrix from data/status.json...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Upstream Warnings / Diagnostics Box -->
+      <div class="diagnostics-box" id="diagnostics-container" style="display:none;">
+        <div class="diag-title">
+          <svg class="icon" style="color:var(--status-retained);" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Upstream Feed Diagnostics Log</span>
+        </div>
+        <p style="color:var(--text-secondary); margin-bottom:var(--space-2);">
+          When individual upstream feeds encounter network issues or XML parsing errors, the scraper automatically preserves the last good file without overwriting it.
+        </p>
+        <ul class="diag-list" id="diagnostics-errors-list"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: How It Works & Architecture -->
+  <section class="section-wrap" id="architecture">
+    <div class="container">
+      <div class="section-header-row">
+        <div class="section-title-group">
+          <span class="section-eyebrow">HOW IT WORKS</span>
+          <h2 class="section-title">Serverless Architecture &amp; Data Behaviors</h2>
+          <p class="section-desc">Reliable static JSON without running databases, server daemons, or billable infrastructure.</p>
+        </div>
+      </div>
+
+      <!-- 3-Step Pipeline Flow -->
+      <div class="arch-grid">
+        <div class="arch-step-card">
+          <span class="arch-step-num">PHASE 01</span>
+          <h3 class="arch-step-title">Scheduled Scraper</h3>
+          <p class="arch-step-desc">
+            A GitHub Actions workflow triggers every two hours. It runs Python ingestion workers that query NewsAPI endpoints (within developer plan budget) and fallback RSS feeds for India, the US, and the UK.
+          </p>
+        </div>
+
+        <div class="arch-step-card">
+          <span class="arch-step-num">PHASE 02</span>
+          <h3 class="arch-step-title">Atomic Persistence</h3>
+          <p class="arch-step-desc">
+            Incoming news items are deduplicated strictly by canonical URL. Writes are atomic; if an upstream feed fails, the workflow preserves the previous valid file so consumers never see truncated data.
+          </p>
+        </div>
+
+        <div class="arch-step-card">
+          <span class="arch-step-num">PHASE 03</span>
+          <h3 class="arch-step-title">Global GitHub CDN</h3>
+          <p class="arch-step-desc">
+            Files are committed to GitHub only when contents change. GitHub’s global edge servers host the raw files with <code>Access-Control-Allow-Origin: *</code>, allowing direct in-browser <code>fetch()</code> anywhere.
+          </p>
+        </div>
+      </div>
+
+      <!-- Guarantees Grid -->
+      <div class="guarantees-grid">
+        <div class="guarantee-card">
+          <span class="guarantee-title">URL Deduplication</span>
+          <span class="guarantee-text">No duplicate stories across multiple RSS sources or pagination windows.</span>
+        </div>
+        <div class="guarantee-card">
+          <span class="guarantee-title">Graceful Retention</span>
+          <span class="guarantee-text">Provider timeouts keep the last good file. Stale status is flagged in status.json.</span>
+        </div>
+        <div class="guarantee-card">
+          <span class="guarantee-title">Zero API Keys</span>
+          <span class="guarantee-text">You fetch public raw files; no credentials to rotate or leak on your frontend.</span>
+        </div>
+        <div class="guarantee-card">
+          <span class="guarantee-title">Dual Output Shapes</span>
+          <span class="guarantee-text">Choose between standard NewsAPI compatibility or enriched provider metadata.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div style="font-family:var(--font-serif); font-size:20px; font-weight:600; color:var(--text-primary);">news-api</div>
+          <p style="max-width:380px; margin-top:var(--space-1); line-height:1.5;">
+            An open-source news data publisher maintained by <a href="https://github.com/pranav256" target="_blank" rel="noopener noreferrer" style="color:var(--text-primary); text-decoration:underline;">pranav256</a>. Publishing reliable static feeds for developers worldwide.
+          </p>
+          <p style="margin-top:var(--space-2); font-size:12px; color:var(--text-muted);">
+            Original news articles, headlines, excerpts, and images belong to their respective publishers (The Hindu, BBC News, The New York Times, ESPN, Reuters, and independent syndications).
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-heading">PROJECT LINKS</div>
+          <ul class="footer-links">
+            <li><a href="https://github.com/pranav256/news-api" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
+            <li><a href="https://github.com/pranav256/news-api/actions" target="_blank" rel="noopener noreferrer">GitHub Actions Runs</a></li>
+            <li><a href="https://raw.githubusercontent.com/pranav256/news-api/main/data/status.json" target="_blank" rel="noopener noreferrer">Live status.json</a></li>
+            <li><a href="https://github.com/pranav256/news-api/issues" target="_blank" rel="noopener noreferrer">Report an Issue</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-heading">ATTRIBUTION &amp; CRAFT</div>
+          <ul class="footer-links">
+            <li><span>Repository License: Unlicensed / Author Copyright</span></li>
+            <li><span>Crafted according to the <a href="https://heydamir.design/unslop" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;">Unslop</a> design system by Damir Sokolovsky</span></li>
+            <li><a href="#reader">Back to Live Reader &uarr;</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 news-api open data project. Published for educational &amp; research integration.</div>
+        <div class="tabular">Edge CDN: raw.githubusercontent.com · No tracking · No telemetry cookies</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ----------------------------------------------------
+       CLIENT JAVASCRIPT APPLICATION
+       ---------------------------------------------------- */ -->
+  <script>
+    (function () {
+      "use strict";
+
+      /* Application State */
+      const state = {
+        country: "us",
+        category: "general",
+        format: "simple", // "simple" | "headlines"
+        articles: [],
+        filterQuery: "",
+        statusData: null,
+        currentStatusFilter: "all",
+        theme: localStorage.getItem("news-api-theme") || "auto",
+        activeLang: "curl"
+      };
+
+      const COUNTRY_NAMES = {
+        in: "India",
+        us: "United States",
+        gb: "United Kingdom"
+      };
+
+      /* DOM Elements */
+      const countryBtns = document.querySelectorAll("#country-selector .seg-btn");
+      const catTabs = document.querySelectorAll("#category-tabs .cat-tab");
+      const formatSelect = document.getElementById("feed-format-select");
+      const articlesFeed = document.getElementById("articles-feed");
+      const searchInput = document.getElementById("reader-search-input");
+      const currentFetchPill = document.getElementById("current-fetch-pill");
+      const readerRawLink = document.getElementById("reader-raw-link");
+      const readerCopyUrlBtn = document.getElementById("reader-copy-url-btn");
+      const articlesCountBadge = document.getElementById("articles-count-badge");
+      const readerRefreshTime = document.getElementById("reader-refresh-time");
+      const manualRefreshBtn = document.getElementById("reader-manual-refresh");
+      
+      const themeToggleBtn = document.getElementById("theme-toggle-btn");
+      const themeIcon = document.getElementById("theme-icon");
+      const mastheadDate = document.getElementById("masthead-date");
+      const liveDot = document.getElementById("live-indicator-dot");
+      const liveText = document.getElementById("live-indicator-text");
+
+      const heroUrlText = document.getElementById("hero-url-text");
+      const heroCopyBtn = document.getElementById("hero-copy-btn");
+      const heroFeedPreviewLabel = document.getElementById("hero-feed-preview-label");
+      const heroStatFeeds = document.getElementById("hero-stat-feeds");
+
+      const snippetLangTabs = document.querySelectorAll("#snippet-lang-tabs .lang-tab");
+      const codeSnippetDisplay = document.getElementById("code-snippet-display");
+      const snippetCopyBtn = document.getElementById("snippet-copy-btn");
+      const schemaToggle = document.getElementById("schema-accordion-toggle");
+      const schemaContent = document.getElementById("schema-content");
+      const schemaChevron = document.getElementById("schema-chevron");
+
+      const statusTableBody = document.getElementById("status-table-body");
+      const statusRefreshBtn = document.getElementById("status-refresh-btn");
+      const statusSearchInput = document.getElementById("status-search-input");
+      const statusFilterBtns = document.querySelectorAll("#status-filter-group .seg-btn");
+
+      /* ----------------------------------------------------
+         THEME HANDLING
+         ---------------------------------------------------- */
+      function applyTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        state.theme = theme;
+        try {
+          localStorage.setItem("news-api-theme", theme);
+        } catch (e) {}
+
+        const isDark =
+          theme === "dark" ||
+          (theme === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+        if (isDark) {
+          // Moon icon
+          themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
+        } else {
+          // Sun icon
+          themeIcon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>`;
+        }
+      }
+
+      themeToggleBtn.addEventListener("click", function () {
+        if (state.theme === "auto") {
+          applyTheme("dark");
+        } else if (state.theme === "dark") {
+          applyTheme("light");
+        } else {
+          applyTheme("auto");
+        }
+      });
+
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
+        if (state.theme === "auto") {
+          applyTheme("auto");
+        }
+      });
+
+      /* ----------------------------------------------------
+         DATE FORMATTING HELPERS
+         ---------------------------------------------------- */
+      function initDateline() {
+        const now = new Date();
+        const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" };
+        mastheadDate.textContent = now.toLocaleDateString("en-US", options);
+      }
+
+      function formatRelativeTime(dateString) {
+        if (!dateString) return "Recently";
+        try {
+          const date = new Date(dateString);
+          if (isNaN(date.getTime())) return "Recently";
+          const diffMs = Date.now() - date.getTime();
+          const diffMin = Math.floor(diffMs / 60000);
+          if (diffMin < 1) return "Just now";
+          if (diffMin < 60) return `${diffMin}m ago`;
+          const diffHours = Math.floor(diffMin / 60);
+          if (diffHours < 24) return `${diffHours}h ago`;
+          const diffDays = Math.floor(diffHours / 24);
+          if (diffDays < 7) return `${diffDays}d ago`;
+          return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        } catch (e) {
+          return "Recently";
+        }
+      }
+
+      function formatDateTime(dateString) {
+        if (!dateString) return "N/A";
+        try {
+          const d = new Date(dateString);
+          if (isNaN(d.getTime())) return dateString;
+          return d.toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            timeZoneName: "short"
+          });
+        } catch (e) {
+          return dateString;
+        }
+      }
+
+      function escapeHtml(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      /* ----------------------------------------------------
+         URL BUILDERS
+         ---------------------------------------------------- */
+      function getEndpointUrl(country, category, format) {
+        if (format === "headlines") {
+          return `https://raw.githubusercontent.com/pranav256/news-api/main/data/${country}/${category}_headlines.json`;
+        }
+        return `https://raw.githubusercontent.com/pranav256/news-api/main/${country}/${category}.json`;
+      }
+
+      function updateActiveUrls() {
+        const url = getEndpointUrl(state.country, state.category, state.format);
+        currentFetchPill.textContent = url;
+        readerRawLink.href = url;
+        
+        // Also update hero URL to match country/category
+        const heroUrl = getEndpointUrl(state.country, state.category, "simple");
+        heroUrlText.textContent = heroUrl;
+        heroFeedPreviewLabel.textContent = `${COUNTRY_NAMES[state.country]} ${state.category.charAt(0).toUpperCase() + state.category.slice(1)}`;
+        
+        updateCodeSnippet();
+        updateFeedRefreshBadge();
+      }
+
+      function updateFeedRefreshBadge() {
+        if (state.statusData && state.statusData.feeds) {
+          const match = state.statusData.feeds.find(f => f.country === state.country && f.category === state.category);
+          if (match && match.last_successful_refresh) {
+            const relTime = formatRelativeTime(match.last_successful_refresh);
+            const statusLabel = match.status === "updated" ? "Refreshed" : "Retained";
+            readerRefreshTime.textContent = `${statusLabel} ${relTime} · ${match.providers ? match.providers.join('+') : 'rss'}`;
+            return;
+          }
+        }
+        readerRefreshTime.textContent = `Updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      }
+
+      /* ----------------------------------------------------
+         DATA STATUS FETCHER & MONITOR
+         ---------------------------------------------------- */
+      async function fetchPipelineStatus() {
+        try {
+          const res = await fetch("https://raw.githubusercontent.com/pranav256/news-api/main/data/status.json");
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          state.statusData = data;
+          renderPipelineStatus(data);
+          updateFeedRefreshBadge();
+        } catch (err) {
+          console.warn("Unable to fetch data/status.json:", err);
+          liveDot.style.backgroundColor = "var(--status-retained)";
+          liveText.textContent = "Status unavailable";
+        }
+      }
+
+      function renderPipelineStatus(data) {
+        if (!data) return;
+
+        const isOnline = data.status === "ok" || data.status === "partial" || data.feeds_updated > 0;
+        liveDot.style.backgroundColor = isOnline ? "var(--status-updated)" : "var(--status-error)";
+        const generatedAtRel = formatRelativeTime(data.generated_at);
+        liveText.textContent = `Pipeline active · Last run ${generatedAtRel}`;
+
+        const statPipeText = document.getElementById("stat-pipe-text");
+        if (statPipeText) {
+          statPipeText.textContent = data.status === "partial" ? "Operational (Partial)" : "Healthy";
+        }
+
+        const feedsUpdatedEl = document.getElementById("stat-feeds-updated");
+        if (feedsUpdatedEl) {
+          const total = (data.feeds ? data.feeds.length : 21);
+          feedsUpdatedEl.textContent = `${data.feeds_updated ?? 21} / ${total}`;
+          if (heroStatFeeds) heroStatFeeds.textContent = total;
+        }
+
+        const feedsRetainedEl = document.getElementById("stat-feeds-retained");
+        if (feedsRetainedEl) {
+          feedsRetainedEl.textContent = data.feeds_retained ?? 0;
+        }
+
+        const newsapiQuotaEl = document.getElementById("stat-newsapi-quota");
+        if (newsapiQuotaEl) {
+          if (data.newsapi_requests_used !== undefined && data.newsapi_requests_allowed !== undefined) {
+            newsapiQuotaEl.textContent = `${data.newsapi_requests_used} / ${data.newsapi_requests_allowed}`;
+          } else {
+            newsapiQuotaEl.textContent = "N/A";
+          }
+        }
+
+        const rssSuccessEl = document.getElementById("stat-rss-success");
+        if (rssSuccessEl) {
+          if (data.rss_feeds_succeeded !== undefined && data.rss_feeds_attempted !== undefined) {
+            rssSuccessEl.textContent = `${data.rss_feeds_succeeded} / ${data.rss_feeds_attempted}`;
+          } else {
+            rssSuccessEl.textContent = "N/A";
+          }
+        }
+
+        renderStatusTable(data.feeds || []);
+
+        const diagContainer = document.getElementById("diagnostics-container");
+        const diagList = document.getElementById("diagnostics-errors-list");
+        if (data.errors && data.errors.length > 0) {
+          diagList.innerHTML = data.errors.map(err => `<li>${escapeHtml(err)}</li>`).join("");
+          diagContainer.style.display = "block";
+        } else {
+          diagContainer.style.display = "none";
+        }
+      }
+
+      function renderStatusTable(feeds) {
+        if (!feeds || feeds.length === 0) {
+          statusTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:var(--space-6); color:var(--text-muted);">No feed records available</td></tr>`;
+          return;
+        }
+
+        const filterMode = state.currentStatusFilter;
+        const searchQuery = (statusSearchInput ? statusSearchInput.value : "").trim().toLowerCase();
+
+        const filtered = feeds.filter(feed => {
+          if (filterMode === "updated" && feed.status !== "updated") return false;
+          if (filterMode === "retained" && feed.status === "updated") return false;
+          if (searchQuery) {
+            const countryMatch = (COUNTRY_NAMES[feed.country] || feed.country).toLowerCase().includes(searchQuery);
+            const catMatch = (feed.category || "").toLowerCase().includes(searchQuery);
+            return countryMatch || catMatch;
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          statusTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:var(--space-6); color:var(--text-muted);">No matching feeds found for criteria</td></tr>`;
+          return;
+        }
+
+        statusTableBody.innerHTML = filtered.map(feed => {
+          const isUpdated = feed.status === "updated";
+          const statusBadge = isUpdated
+            ? `<span class="status-badge updated"><span class="live-dot" style="width:5px; height:5px; background:var(--status-updated)"></span>updated</span>`
+            : `<span class="status-badge retained"><span class="live-dot" style="width:5px; height:5px; background:var(--status-retained)"></span>retained</span>`;
+          
+          const providersHtml = (feed.providers || ["rss"])
+            .map(p => `<span class="provider-pill">${escapeHtml(p)}</span>`)
+            .join("");
+
+          const refreshFormatted = formatDateTime(feed.last_successful_refresh || feed.attempted_at);
+          const rawUrl = `https://raw.githubusercontent.com/pranav256/news-api/main/${feed.country}/${feed.category}.json`;
+
+          return `
+            <tr>
+              <td>
+                <span style="font-weight:500; color:var(--text-primary);">${COUNTRY_NAMES[feed.country] || feed.country}</span>
+                <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted); margin-left:4px;">(${escapeHtml(feed.country)})</span>
+              </td>
+              <td style="font-family:var(--font-mono);">${escapeHtml(feed.category)}</td>
+              <td>${statusBadge}</td>
+              <td>${providersHtml}</td>
+              <td class="tabular" style="font-family:var(--font-mono);">${feed.articles_count ?? "--"}</td>
+              <td class="tabular" style="font-size:12px; color:var(--text-muted);">${refreshFormatted}</td>
+              <td>
+                <a href="${rawUrl}" target="_blank" rel="noopener noreferrer" class="btn-copy" style="padding:2px 6px; font-size:11px;">
+                  <span>raw JSON</span>
+                  <svg class="icon" style="width:12px; height:12px;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      /* ----------------------------------------------------
+         LIVE NEWS READER FETCHER & RENDERER
+         ---------------------------------------------------- */
+      function renderLoadingSkeleton() {
+        articlesFeed.innerHTML = Array(6).fill(0).map(() => `
+          <div class="skeleton-card skeleton-pulse">
+            <div style="display:flex; justify-content:space-between; margin-bottom:var(--space-2);">
+              <div class="skeleton-line" style="width:70px;"></div>
+              <div class="skeleton-line" style="width:50px;"></div>
+            </div>
+            <div class="skeleton-line" style="width:90%; height:20px;"></div>
+            <div class="skeleton-line" style="width:75%; height:20px;"></div>
+            <div class="skeleton-line" style="width:100%; height:40px; margin-top:var(--space-1);"></div>
+            <div class="skeleton-line" style="width:110px; margin-top:auto;"></div>
+          </div>
+        `).join("");
+      }
+
+      async function fetchArticles() {
+        renderLoadingSkeleton();
+        updateActiveUrls();
+        articlesCountBadge.textContent = "Fetching...";
+
+        const targetUrl = getEndpointUrl(state.country, state.category, state.format);
+
+        try {
+          const res = await fetch(targetUrl);
+          if (!res.ok) {
+            throw new Error(`HTTP Error ${res.status}: ${res.statusText}`);
+          }
+          const data = await res.json();
+          
+          let articles = [];
+          if (Array.isArray(data.articles)) {
+            articles = data.articles;
+          }
+
+          state.articles = articles;
+          renderArticles();
+        } catch (err) {
+          console.error("Reader fetch error:", err);
+          renderErrorState(err.message, targetUrl);
+        }
+      }
+
+      function renderArticles() {
+        const query = (searchInput.value || "").trim().toLowerCase();
+        let list = state.articles;
+
+        if (query) {
+          list = list.filter(a => {
+            const title = (a.title || "").toLowerCase();
+            const desc = (a.description || "").toLowerCase();
+            const src = (a.source && a.source.name ? a.source.name : "").toLowerCase();
+            return title.includes(query) || desc.includes(query) || src.includes(query);
+          });
+        }
+
+        articlesCountBadge.textContent = `${list.length} article${list.length === 1 ? '' : 's'}`;
+
+        if (list.length === 0) {
+          articlesFeed.innerHTML = `
+            <div class="state-banner" style="grid-column: 1 / -1;">
+              <h3 class="state-title">No articles found</h3>
+              <p class="state-desc">${query ? `No headlines match your search filter "${escapeHtml(query)}".` : 'This category feed is currently empty.'}</p>
+              ${query ? `<button class="btn-retry" id="clear-search-btn">Clear search</button>` : ''}
+            </div>
+          `;
+          const clearBtn = document.getElementById("clear-search-btn");
+          if (clearBtn) {
+            clearBtn.addEventListener("click", () => {
+              searchInput.value = "";
+              renderArticles();
+            });
+          }
+          return;
+        }
+
+        articlesFeed.innerHTML = list.map(article => {
+          const sourceName = (article.source && article.source.name) ? article.source.name : "Publisher";
+          const relTime = formatRelativeTime(article.publishedAt);
+          const authorText = article.author && article.author.trim() && article.author.length < 50 ? `By ${article.author}` : "";
+          const hasDesc = Boolean(article.description && article.description.trim());
+          const safeUrl = article.url ? escapeHtml(article.url) : "#";
+          
+          return `
+            <article class="article-card">
+              <div>
+                <div class="article-card-header">
+                  <span class="article-source-tag" title="${escapeHtml(sourceName)}">${escapeHtml(sourceName)}</span>
+                  <time class="article-time">${relTime}</time>
+                </div>
+                
+                <h3 style="margin-top:var(--space-3); margin-bottom:var(--space-2);">
+                  <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="article-headline">
+                    ${escapeHtml(article.title || "Untitled dispatch")}
+                  </a>
+                </h3>
+
+                ${hasDesc ? `<p class="article-excerpt">${escapeHtml(article.description)}</p>` : ''}
+              </div>
+
+              <div class="article-footer">
+                <span class="article-author">${escapeHtml(authorText)}</span>
+                <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="article-link-out">
+                  <span>Read story</span>
+                  <svg class="icon" style="width:13px; height:13px;" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+                </a>
+              </div>
+            </article>
+          `;
+        }).join("");
+      }
+
+      function renderErrorState(errorMessage, url) {
+        articlesCountBadge.textContent = "Error";
+        articlesFeed.innerHTML = `
+          <div class="state-banner" style="grid-column: 1 / -1;">
+            <svg class="icon" style="width:32px; height:32px; color:var(--status-error); margin-bottom:var(--space-2);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <h3 class="state-title">Failed to load feed data</h3>
+            <p class="state-desc">The request to <code>${escapeHtml(url)}</code> failed (${escapeHtml(errorMessage)}). The raw GitHub file may still be generating or experiencing upstream CDN delay.</p>
+            <button class="btn-retry" id="reader-error-retry-btn">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+              <span>Retry request</span>
+            </button>
+          </div>
+        `;
+        const retryBtn = document.getElementById("reader-error-retry-btn");
+        if (retryBtn) {
+          retryBtn.addEventListener("click", fetchArticles);
+        }
+      }
+
+      /* ----------------------------------------------------
+         CODE SNIPPET GENERATOR
+         ---------------------------------------------------- */
+      function updateCodeSnippet() {
+        const url = getEndpointUrl(state.country, state.category, state.format);
+        let snippet = "";
+
+        if (state.activeLang === "curl") {
+          snippet = `curl -s "${url}" | jq .`;
+        } else if (state.activeLang === "js") {
+          snippet = `// Browser fetch or Node 18+ (CORS supported natively)
+async function fetchNews() {
+  const res = await fetch("${url}");
+  if (!res.ok) throw new Error(\`HTTP error! status: \${res.status}\`);
+  const data = await res.json();
+  console.log("Total articles:", data.totalResults || data.articles_count);
+  console.log(data.articles);
+}
+
+fetchNews();`;
+        } else if (state.activeLang === "python") {
+          snippet = `import requests
+
+url = "${url}"
+response = requests.get(url)
+response.raise_for_status()
+
+news_data = response.json()
+print(f"Total articles: {len(news_data.get('articles', []))}")
+for article in news_data.get('articles', []):
+    print(f"- {article.get('title')} ({article.get('source', {}).get('name')})")`;
+        } else if (state.activeLang === "go") {
+          snippet = `package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
+type NewsResponse struct {
+	Status       string \`json:"status"\`
+	TotalResults int    \`json:"totalResults"\`
+	Articles     []struct {
+		Title  string \`json:"title"\`
+		URL    string \`json:"url"\`
+		Source struct {
+			Name string \`json:"name"\`
+		} \`json:"source"\`
+	} \`json:"articles"\`
+}
+
+func main() {
+	resp, err := http.Get("${url}")
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	var data NewsResponse
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Fetched %d articles\\n", len(data.Articles))
+}`;
+        }
+
+        codeSnippetDisplay.textContent = snippet;
+      }
+
+      /* ----------------------------------------------------
+         COPY CLIPBOARD HELPER
+         ---------------------------------------------------- */
+      function copyToClipboard(text, btnElement) {
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+          if (btnElement) {
+            btnElement.classList.add("copied");
+            const label = btnElement.querySelector(".btn-copy-label") || btnElement.querySelector("span");
+            const orig = label ? label.textContent : "";
+            if (label) label.textContent = "Copied";
+            setTimeout(() => {
+              btnElement.classList.remove("copied");
+              if (label) label.textContent = orig;
+            }, 1800);
+          }
+        }).catch(err => {
+          console.warn("Clipboard write failed", err);
+        });
+      }
+
+      /* ----------------------------------------------------
+         EVENT LISTENERS & BINDINGS
+         ---------------------------------------------------- */
+      // Country Selector
+      countryBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          countryBtns.forEach(b => {
+            b.classList.remove("active");
+            b.setAttribute("aria-checked", "false");
+          });
+          btn.classList.add("active");
+          btn.setAttribute("aria-checked", "true");
+          state.country = btn.getAttribute("data-country");
+          fetchArticles();
+        });
+      });
+
+      // Category Tabs
+      catTabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          catTabs.forEach(t => {
+            t.classList.remove("active");
+            t.setAttribute("aria-selected", "false");
+          });
+          tab.classList.add("active");
+          tab.setAttribute("aria-selected", "true");
+          state.category = tab.getAttribute("data-category");
+          fetchArticles();
+        });
+      });
+
+      // Format Selector
+      formatSelect.addEventListener("change", (e) => {
+        state.format = e.target.value;
+        fetchArticles();
+      });
+
+      // Reader Filter Search
+      searchInput.addEventListener("input", () => {
+        renderArticles();
+      });
+
+      // Reader Manual Reload
+      manualRefreshBtn.addEventListener("click", () => {
+        fetchArticles();
+      });
+
+      // Reader Copy URL
+      readerCopyUrlBtn.addEventListener("click", () => {
+        const url = getEndpointUrl(state.country, state.category, state.format);
+        copyToClipboard(url, readerCopyUrlBtn);
+      });
+
+      // Hero Copy Button
+      heroCopyBtn.addEventListener("click", () => {
+        const url = heroUrlText.textContent;
+        copyToClipboard(url, heroCopyBtn);
+      });
+
+      // Snippet Tabs
+      snippetLangTabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          snippetLangTabs.forEach(t => t.classList.remove("active"));
+          tab.classList.add("active");
+          state.activeLang = tab.getAttribute("data-lang");
+          updateCodeSnippet();
+        });
+      });
+
+      // Snippet Copy
+      snippetCopyBtn.addEventListener("click", () => {
+        copyToClipboard(codeSnippetDisplay.textContent, snippetCopyBtn);
+      });
+
+      // Schema Accordion
+      schemaToggle.addEventListener("click", () => {
+        const isHidden = schemaContent.style.display === "none";
+        schemaContent.style.display = isHidden ? "block" : "none";
+        schemaChevron.style.transform = isHidden ? "rotate(180deg)" : "rotate(0deg)";
+      });
+      schemaToggle.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          schemaToggle.click();
+        }
+      });
+
+      // Status Matrix Filter Buttons
+      statusFilterBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          statusFilterBtns.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          state.currentStatusFilter = btn.getAttribute("data-status-filter");
+          if (state.statusData && state.statusData.feeds) {
+            renderStatusTable(state.statusData.feeds);
+          }
+        });
+      });
+
+      // Status Table Search
+      statusSearchInput.addEventListener("input", () => {
+        if (state.statusData && state.statusData.feeds) {
+          renderStatusTable(state.statusData.feeds);
+        }
+      });
+
+      // Status Manual Refresh
+      statusRefreshBtn.addEventListener("click", () => {
+        fetchPipelineStatus();
+      });
+
+      /* ----------------------------------------------------
+         INITIALIZATION
+         ---------------------------------------------------- */
+      applyTheme(state.theme);
+      initDateline();
+      updateActiveUrls();
+      fetchArticles();
+      fetchPipelineStatus();
+
+    })();
+  </script>
+</body>
+</html>
