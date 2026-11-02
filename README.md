@@ -2,10 +2,13 @@
 
 A responsive, high-performance editorial web application and documentation portal for [pranav256/news-api](https://github.com/pranav256/news-api). Built with **Next.js (App Router)**, **TypeScript**, and styled strictly in accordance with Damir Sokolovsky's [Unslop Design System](https://heydamir.design/unslop).
 
+[![Live Site](https://img.shields.io/badge/Live%20Deployment-news--api--web--five.vercel.app-success)](https://news-api-web-five.vercel.app)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org)
-[![Vercel](https://img.shields.io/badge/Hosted%20on-Vercel-black)](https://vercel.com)
+[![Hosted on Vercel](https://img.shields.io/badge/Hosted%20on-Vercel-black)](https://vercel.com)
 [![License: Unlicensed](https://img.shields.io/badge/License-Unlicensed-lightgrey)](https://github.com/pranav256/news-api)
+
+**Production URL**: [https://news-api-web-five.vercel.app](https://news-api-web-five.vercel.app)
 
 ---
 
@@ -67,13 +70,10 @@ npm start
 
 ## Deployment on Vercel
 
-This repository is optimized for zero-configuration hosting on [Vercel](https://vercel.com):
+The project is hosted on Vercel and configured to automatically build and deploy every commit pushed to `main`:
 
-1. Push to GitHub (`main` branch).
-2. Import repository in your Vercel dashboard or run:
-   ```bash
-   npx vercel --prod
-   ```
+- **Production URL**: [https://news-api-web-five.vercel.app](https://news-api-web-five.vercel.app)
+- **Deployment Target**: Production Edge / Fluid Compute (Next.js 14)
 
 ---
 
