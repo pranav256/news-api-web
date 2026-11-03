@@ -369,6 +369,17 @@ func main() {
           </nav>
 
           <div className="header-actions">
+            <a
+              href="https://24x7.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="github-link"
+              title="Open 24x7 News Reader web app"
+            >
+              <ExternalLink className="icon" />
+              <span>24x7.vercel.app</span>
+            </a>
+
             <button
               onClick={toggleTheme}
               className="icon-btn"
@@ -433,6 +444,29 @@ func main() {
             </div>
           </div>
 
+          {/* Reference Implementation Showcase Banner */}
+          <div className="showcase-banner">
+            <div className="showcase-badge">LIVE IMPLEMENTATION</div>
+            <div className="showcase-body">
+              <span className="showcase-title">
+                24x7 News Reader Web App
+              </span>
+              <span className="showcase-desc">
+                Discover headlines, save a browser-local reading queue, and inspect feed freshness at <a href="https://24x7.vercel.app" target="_blank" rel="noopener noreferrer" className="showcase-link">24x7.vercel.app</a> — powered directly by this JSON dataset.
+              </span>
+            </div>
+            <a
+              href="https://24x7.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-copy"
+              style={{ padding: '6px 14px', fontSize: '13px' }}
+            >
+              <span>Open 24x7</span>
+              <ExternalLink className="icon" style={{ width: '13px', height: '13px' }} />
+            </a>
+          </div>
+
           <div className="hero-stats-grid">
             <div className="stat-cell">
               <div className="stat-num tabular">{statusData?.feeds?.length ?? 21}</div>
@@ -462,7 +496,7 @@ func main() {
               <span className="section-eyebrow">BROADSHEET DEMO</span>
               <h2 className="section-title">Live News Reader</h2>
               <p className="section-desc">
-                Client-side reader pulling real-time JSON files directly from GitHub. Select country, topic, and feed schema.
+                Client-side reader pulling real-time JSON files directly from GitHub. Looking for saved reading queues and offline caching? Launch the reference app at <a href="https://24x7.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', color: 'var(--text-primary)' }}>24x7.vercel.app</a>.
               </p>
             </div>
 
@@ -1125,8 +1159,10 @@ func main() {
               <span className="guarantee-text">You fetch public raw files; no credentials to rotate or leak on your frontend.</span>
             </div>
             <div className="guarantee-card">
-              <span className="guarantee-title">Dual Output Shapes</span>
-              <span className="guarantee-text">Choose between standard NewsAPI compatibility or enriched provider metadata.</span>
+              <span className="guarantee-title">Reference Implementation</span>
+              <span className="guarantee-text">
+                <a href="https://24x7.vercel.app" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>24x7.vercel.app</a> demonstrates zero-backend client-side consumption with reading queues.
+              </span>
             </div>
           </div>
         </div>
@@ -1160,8 +1196,14 @@ func main() {
             <div className="footer-col">
               <div className="footer-heading">PROJECT LINKS</div>
               <ul className="footer-links">
-                <li><a href="https://github.com/pranav256/news-api" target="_blank" rel="noopener noreferrer">GitHub Repository</a></li>
-                <li><a href="https://github.com/pranav256/news-api/actions" target="_blank" rel="noopener noreferrer">GitHub Actions Runs</a></li>
+                <li>
+                  <a href="https://24x7.vercel.app" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <span>24x7 News Reader App</span>
+                    <ExternalLink className="icon" style={{ width: '12px', height: '12px' }} />
+                  </a>
+                </li>
+                <li><a href="https://github.com/pranav256/news-api" target="_blank" rel="noopener noreferrer">GitHub news-api Scraper</a></li>
+                <li><a href="https://github.com/pranav256/news-api-web" target="_blank" rel="noopener noreferrer">GitHub news-api-web Portal</a></li>
                 <li><a href="https://raw.githubusercontent.com/pranav256/news-api/main/data/status.json" target="_blank" rel="noopener noreferrer">Live status.json</a></li>
                 <li><a href="https://github.com/pranav256/news-api/issues" target="_blank" rel="noopener noreferrer">Report an Issue</a></li>
               </ul>

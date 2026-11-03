@@ -395,7 +395,63 @@ button {
   gap: var(--space-3);
   max-width: 760px;
   box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-6);
+}
+
+.showcase-banner {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  max-width: 760px;
   margin-bottom: var(--space-10);
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+
+.showcase-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  background-color: var(--accent-subtle);
+  padding: 3px 7px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.showcase-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 260px;
+}
+
+.showcase-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.showcase-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.showcase-link {
+  color: var(--text-primary);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.showcase-link:hover {
+  color: var(--accent);
 }
 
 .snippet-top {

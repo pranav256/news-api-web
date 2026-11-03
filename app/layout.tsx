@@ -1,12 +1,4 @@
 import type { Metadata } from 'next';
-import { Analytics } from '@vercel/analytics/react';
-import './globals.css';
-
-export const metadata: Metadata = {
-  title: 'news-api — Free, No-Key News JSON',
-  description: 'Free, open-source news JSON scraped every two hours and committed to GitHub. Zero API keys, zero rate-limit tokens, fetch directly from raw.githubusercontent.com.',
-};
-
 export default function RootLayout({
   children,
 }: {
@@ -22,10 +14,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
-        {children}
-        <Analytics />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
