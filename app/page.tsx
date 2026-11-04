@@ -10,6 +10,8 @@ import {
   Sun,
   Moon,
   Github,
+  Linkedin,
+  Twitter,
   ChevronDown,
   AlertTriangle,
   Radio,
@@ -378,6 +380,28 @@ func main() {
             >
               <ExternalLink className="icon" />
               <span>24x7.vercel.app</span>
+            </a>
+
+            <a
+              href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fnews-api-web-five.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="icon-btn"
+              title="Share news-api on LinkedIn"
+              aria-label="Share on LinkedIn"
+            >
+              <Linkedin className="icon" />
+            </a>
+
+            <a
+              href="https://twitter.com/intent/tweet?text=Free%2C%20no-key%20global%20news%20JSON%20refreshed%20every%202h%20via%20GitHub%20Actions.%20Zero%20servers%2C%20open%20CORS%20and%20live%20broadsheet%20reader%3A&url=https%3A%2F%2Fnews-api-web-five.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="icon-btn"
+              title="Share news-api on X / Twitter"
+              aria-label="Share on X"
+            >
+              <Twitter className="icon" />
             </a>
 
             <button

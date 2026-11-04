@@ -12,6 +12,17 @@ A responsive, high-performance editorial web application and documentation porta
 
 ---
 
+## 📢 Promotion & Launch Kit
+
+Ready-to-use launch drafts, architecture posts, and 1-click sharing buttons:
+- **1-Click Social Shares**: [ONE_CLICK_SHARE_LINKS.md](./ONE_CLICK_SHARE_LINKS.md) (LinkedIn, X/Twitter, Reddit, Hacker News)
+- **LinkedIn Profile Setup & 4-Part Campaign**: [LINKEDIN_PROMOTION_KIT.md](./LINKEDIN_PROMOTION_KIT.md)
+- **Show HN Submission Draft**: [SHOW_HN.md](./SHOW_HN.md)
+- **Reddit Posts (r/webdev, r/opensource)**: [REDDIT_POSTS.md](./REDDIT_POSTS.md)
+- **Dev.to / Hashnode Technical Article**: [DEVTO_ARTICLE.md](./DEVTO_ARTICLE.md)
+
+---
+
 ## Features
 
 - **Live Broadsheet News Reader**:
