@@ -10,8 +10,6 @@ import {
   Sun,
   Moon,
   Github,
-  Linkedin,
-  Twitter,
   ChevronDown,
   AlertTriangle,
   Radio,
@@ -80,6 +78,65 @@ const CATEGORIES = [
   'technology',
   'entertainment',
 ];
+
+/* Editorial Logo Mark */
+function LogoMark({ size = 22 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      style={{ display: 'block' }}
+    >
+      <rect
+        x="2.5"
+        y="2.5"
+        width="19"
+        height="19"
+        rx="3.5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+      />
+      <path
+        d="M6.5 7h11"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <path
+        d="M6.5 11h6.5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <path
+        d="M6.5 14.5h5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        opacity="0.65"
+      />
+      <path
+        d="M6.5 17.5h5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        opacity="0.65"
+      />
+      <rect
+        x="14"
+        y="13.5"
+        width="3.5"
+        height="4"
+        rx="0.75"
+        fill="var(--accent)"
+      />
+    </svg>
+  );
+}
 
 export default function HomePage() {
   /* State */
@@ -353,12 +410,13 @@ func main() {
       {/* Primary Header */}
       <header className="site-header">
         <div className="container header-inner">
-          <div className="brand-group">
-            <a href="#" className="brand-title">
-              news-api
-            </a>
+          <a href="#" className="brand-group" aria-label="news-api homepage">
+            <span className="brand-logo-mark">
+              <LogoMark size={22} />
+            </span>
+            <span className="brand-title">news-api</span>
             <span className="brand-tag">raw.githubusercontent.com</span>
-          </div>
+          </a>
 
           <nav aria-label="Main Navigation">
             <ul className="nav-links">
@@ -380,28 +438,6 @@ func main() {
             >
               <ExternalLink className="icon" />
               <span>24x7.vercel.app</span>
-            </a>
-
-            <a
-              href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fnews-api-live.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="icon-btn"
-              title="Share news-api on LinkedIn"
-              aria-label="Share on LinkedIn"
-            >
-              <Linkedin className="icon" />
-            </a>
-
-            <a
-              href="https://twitter.com/intent/tweet?text=Free%2C%20no-key%20global%20news%20JSON%20refreshed%20every%202h%20via%20GitHub%20Actions.%20Zero%20servers%2C%20open%20CORS%20and%20live%20broadsheet%20reader%3A&url=https%3A%2F%2Fnews-api-live.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="icon-btn"
-              title="Share news-api on X / Twitter"
-              aria-label="Share on X"
-            >
-              <Twitter className="icon" />
             </a>
 
             <button
@@ -1197,8 +1233,13 @@ func main() {
         <div className="container">
           <div className="footer-grid">
             <div className="footer-col">
-              <div style={{ fontFamily: 'var(--font-serif)', fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                news-api
+              <div className="brand-group" style={{ marginBottom: 'var(--space-2)' }}>
+                <span className="brand-logo-mark">
+                  <LogoMark size={20} />
+                </span>
+                <span className="brand-title" style={{ fontSize: '20px' }}>
+                  news-api
+                </span>
               </div>
               <p style={{ maxWidth: '380px', marginTop: 'var(--space-1)', lineHeight: 1.5 }}>
                 An open-source news data publisher maintained by{' '}
