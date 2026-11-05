@@ -2,7 +2,7 @@
 
 ### Submission Details
 - **Title:** `Show HN: news-api – Free, no-key global news JSON refreshed every 2h`
-- **URL:** `https://news-api-web-five.vercel.app`
+- **URL:** `https://news-api-live.vercel.app`
 - **Text / Comment:**
 
 ```text
@@ -24,7 +24,7 @@ Endpoints:
 - Rich headlines: `https://raw.githubusercontent.com/pranav256/news-api/main/data/{country}/{category}_headlines.json`
 - Health: `https://raw.githubusercontent.com/pranav256/news-api/main/data/status.json`
 
-To make exploring the data easy, I also built news-api-web (https://news-api-web-five.vercel.app): an editorial broadsheet reader and interactive API documentation portal built with Next.js 14 and designed under the Unslop principles (strict 4px grid rhythm, Newsreader serif typography, no SaaS glow bloat).
+To make exploring the data easy, I also built news-api-web (https://news-api-live.vercel.app): an editorial broadsheet reader and interactive API documentation portal built with Next.js 14 and designed under the Unslop principles (strict 4px grid rhythm, Newsreader serif typography, no SaaS glow bloat).
 
 A live reference web app consuming this pipeline is also running at https://24x7.vercel.app.
 

@@ -383,7 +383,7 @@ func main() {
             </a>
 
             <a
-              href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fnews-api-web-five.vercel.app"
+              href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fnews-api-live.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
               className="icon-btn"
@@ -394,7 +394,7 @@ func main() {
             </a>
 
             <a
-              href="https://twitter.com/intent/tweet?text=Free%2C%20no-key%20global%20news%20JSON%20refreshed%20every%202h%20via%20GitHub%20Actions.%20Zero%20servers%2C%20open%20CORS%20and%20live%20broadsheet%20reader%3A&url=https%3A%2F%2Fnews-api-web-five.vercel.app"
+              href="https://twitter.com/intent/tweet?text=Free%2C%20no-key%20global%20news%20JSON%20refreshed%20every%202h%20via%20GitHub%20Actions.%20Zero%20servers%2C%20open%20CORS%20and%20live%20broadsheet%20reader%3A&url=https%3A%2F%2Fnews-api-live.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
               className="icon-btn"

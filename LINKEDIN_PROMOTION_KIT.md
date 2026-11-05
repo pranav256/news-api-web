@@ -31,7 +31,7 @@ Core focus areas:
 • Infrastructure: Vercel, Git-backed static CDNs, Web scraping & RSS parsing
 
 Check out my work:
-• Live Editorial Portal: https://news-api-web-five.vercel.app
+• Live Editorial Portal: https://news-api-live.vercel.app
 • Dataset Pipeline: https://github.com/pranav256/news-api
 • Live Implementation: https://24x7.vercel.app
 ```
@@ -41,7 +41,7 @@ Check out my work:
 ### Featured Section (Add as Media / Links)
 
 1. **Link 1: news-api Web Portal**
-   - **URL:** `https://news-api-web-five.vercel.app`
+   - **URL:** `https://news-api-live.vercel.app`
    - **Title:** `news-api Web — Live Broadsheet Reader & API Documentation`
    - **Description:** `Production Next.js 14 portal featuring real-time client-side broadsheet reading, interactive endpoint inspection, and telemetry tracking across 21 global feeds.`
 
@@ -62,7 +62,7 @@ Check out my work:
 - **Project Name:** `news-api & news-api-web`
 - **Associated With:** Independent Project / Open Source
 - **Dates:** Ongoing
-- **Project URL:** `https://news-api-web-five.vercel.app`
+- **Project URL:** `https://news-api-live.vercel.app`
 - **Description:**
   ```text
   Designed and built a completely serverless open-source news data layer and companion web application:
@@ -116,7 +116,7 @@ How it works:
 To make exploring the data effortless, I also built news-api-web: an editorial, broadsheet-style documentation site and live reader.
 
 Explore the live reader and API docs:
-https://news-api-web-five.vercel.app
+https://news-api-live.vercel.app
 
 Reference consumer app (24x7):
 https://24x7.vercel.app
@@ -158,7 +158,7 @@ Consumers fetch straight from raw.githubusercontent.com. Because GitHub sets Acc
 Every run updates a data/status.json manifest tracking provider counts, article counts, generation timestamps, and refresh status across all 21 feeds.
 
 Check out the full architecture breakdown and live status monitor:
-https://news-api-web-five.vercel.app/#status
+https://news-api-live.vercel.app/#status
 
 Code: https://github.com/pranav256/news-api
 
@@ -184,7 +184,7 @@ When building news-api-web, I deliberately took the opposite path by applying Da
 • Live Client-Side Data: The reader doesn't simulate articles—it pulls live data from the GitHub CDN in real time.
 
 Live site:
-https://news-api-web-five.vercel.app
+https://news-api-live.vercel.app
 
 Frontend source code (Next.js 14 App Router & Tailwind CSS):
 https://github.com/pranav256/news-api-web
@@ -216,7 +216,7 @@ Whether you're building a terminal CLI news reader, a personal RSS dashboard, an
 curl https://raw.githubusercontent.com/pranav256/news-api/main/in/technology.json
 
 Check out the live reader and integrate it into your projects:
-Portal: https://news-api-web-five.vercel.app
+Portal: https://news-api-live.vercel.app
 Client demo: https://24x7.vercel.app
 Repo: https://github.com/pranav256/news-api
 
@@ -233,7 +233,7 @@ Repo: https://github.com/pranav256/news-api
    - Post 3: Following Tuesday at 8:30 AM local time.
    - Post 4: Following Thursday at 9:00 AM local time.
 2. **Media Assets**:
-   - For Post 1 & 3: Attach a clean screenshot of the live broadsheet reader from `news-api-web-five.vercel.app`.
+   - For Post 1 & 3: Attach a clean screenshot of the live broadsheet reader from `news-api-live.vercel.app`.
    - For Post 2: Attach a screenshot of the data status telemetry panel or a simple architecture diagram.
 3. **Engagement**:
    - Respond to every comment within the first 60 minutes to boost LinkedIn algorithm distribution.

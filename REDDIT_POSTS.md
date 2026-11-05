@@ -22,7 +22,7 @@ So I built **news-api**: an open-source pipeline that runs entirely on GitHub Ac
 
 To showcase the data, I built a broadsheet-style live reader and documentation portal using Next.js 14 and Damir Sokolovsky's Unslop design principles (4px grid rhythm, Newsreader serif typography, no generic SaaS purple glow slop):
 
-- **Live Reader & Docs**: https://news-api-web-five.vercel.app
+- **Live Reader & Docs**: https://news-api-live.vercel.app
 - **Live Consumer Web App (24x7)**: https://24x7.vercel.app
 - **Pipeline Repo**: https://github.com/pranav256/news-api
 - **Web App Repo**: https://github.com/pranav256/news-api-web
@@ -56,7 +56,7 @@ It's a serverless public dataset of clean, categorized news JSON committed every
 
 Links:
 - Pipeline Repo: https://github.com/pranav256/news-api
-- Web Portal & Live Reader: https://news-api-web-five.vercel.app
+- Web Portal & Live Reader: https://news-api-live.vercel.app
 - Production Example: https://24x7.vercel.app
 
 All code is open and contributions/feed suggestions are welcome!

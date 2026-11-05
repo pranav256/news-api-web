@@ -3,7 +3,7 @@ import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://news-api-web-five.vercel.app'),
+  metadataBase: new URL('https://news-api-live.vercel.app'),
   title: 'news-api — Free, No-Key Global News JSON & Live Broadsheet Reader',
   description:
     'Free, serverless global news JSON refreshed every two hours. Deduplicated, atomically committed, and delivered via GitHub CDN with open CORS across 21 categorized feeds.',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     title: 'news-api — Free, No-Key Global News JSON',
     description:
       'Serverless news pipeline scraped every 2 hours across India, US, and UK. Zero auth, zero servers, direct browser CORS.',
-    url: 'https://news-api-web-five.vercel.app',
+    url: 'https://news-api-live.vercel.app',
     siteName: 'news-api',
     locale: 'en_US',
     type: 'website',

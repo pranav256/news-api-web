@@ -94,7 +94,7 @@ export default async function Image() {
         >
           <div>21 Feeds · India · United States · United Kingdom</div>
           <div style={{ color: '#161513', fontWeight: 600 }}>
-            news-api-web-five.vercel.app
+            news-api-live.vercel.app
           </div>
         </div>
       </div>
