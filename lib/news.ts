@@ -35,6 +35,7 @@ export interface NewsFeed {
   articles: Article[];
   total: number | null;
   fetchedAt: string | null;
+  preview: string;
 }
 export interface FeedStatus {
   country: Country;
@@ -91,6 +92,7 @@ export function parseNews(value: unknown): NewsFeed {
   const data = object(value);
   if (!Array.isArray(data.articles)) throw new Error('The feed response could not be read.');
   const seen = new Set<string>();
+  const previewArticles: Record<string, unknown>[] = [];
   const articles = data.articles.flatMap((item: unknown): Article[] => {
     const article = object(item);
     const title = plainText(article.title);
@@ -99,9 +101,14 @@ export function parseNews(value: unknown): NewsFeed {
     const url = safeUrl(article.url);
     const image = safeUrl(article.urlToImage);
     if (!title || title === '[Removed]' || !url || seen.has(url)) return [];
-    if (excludedTopics.test([title, description, publisher, article.content, url, image].join(' ')))
+    if (
+      excludedTopics.test(
+        [title, description, publisher, JSON.stringify(article), url, image].join(' '),
+      )
+    )
       return [];
     seen.add(url);
+    previewArticles.push(article);
     return [
       {
         title,
@@ -117,6 +124,28 @@ export function parseNews(value: unknown): NewsFeed {
     articles,
     total: count(data.totalResults) ?? count(data.articles_count),
     fetchedAt: date(data.fetched_at),
+    preview: JSON.stringify(
+      {
+        ...Object.fromEntries(
+          Object.entries(data).filter(
+            ([key, value]) =>
+              [
+                'status',
+                'totalResults',
+                'source',
+                'country',
+                'category',
+                'providers',
+                'fetched_at',
+                'articles_count',
+              ].includes(key) && !excludedTopics.test(JSON.stringify(value)),
+          ),
+        ),
+        articles: previewArticles.slice(0, 1),
+      },
+      null,
+      2,
+    ),
   };
 }
 

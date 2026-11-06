@@ -26,9 +26,10 @@ export function useResource<T>(url: string, parse: (value: unknown) => T, interv
     const refresh = async () => {
       const request = ++sequence;
       controller?.abort();
-      controller = new AbortController();
-      const signal = controller.signal;
-      const timeout = window.setTimeout(() => controller?.abort(), 15000);
+      const requestController = new AbortController();
+      controller = requestController;
+      const signal = requestController.signal;
+      const timeout = window.setTimeout(() => requestController.abort(), 15000);
       setResource((previous) => ({
         url,
         data: previous.url === url ? previous.data : null,

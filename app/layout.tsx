@@ -46,14 +46,14 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(origin),
-  title: { default: 'news-api — The world’s news. Open to everyone.', template: '%s · news-api' },
+  title: { default: 'news-api — The world, in plain JSON.', template: '%s · news-api' },
   description,
   applicationName: 'news-api',
   authors: [{ name: 'Pranav', url: 'https://github.com/pranav256' }],
   creator: 'Pranav',
   alternates: { canonical: origin },
   openGraph: {
-    title: 'The world’s news. Open to everyone.',
+    title: 'The world, in plain JSON.',
     description,
     url: origin,
     siteName: 'news-api',
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'news-api — The world’s news. Open to everyone.',
+    title: 'news-api — The world, in plain JSON.',
     description,
   },
   robots: {

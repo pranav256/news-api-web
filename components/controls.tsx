@@ -23,9 +23,9 @@ export function Segmented<T extends string>({
   return (
     <div className={`segmented ${className}`} role="group" aria-label={label}>
       {options.map((option) => (
-        <button
+        <Button
           key={option.value}
-          type="button"
+          variant="ghost"
           aria-pressed={value === option.value}
           onClick={() => onChange(option.value)}
           className="segment"
@@ -43,7 +43,7 @@ export function Segmented<T extends string>({
             {option.prefix && <span className="segment-prefix">{option.prefix}</span>}
             {option.label}
           </span>
-        </button>
+        </Button>
       ))}
     </div>
   );

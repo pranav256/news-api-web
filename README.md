@@ -19,6 +19,16 @@ npm run build
 npm start
 ```
 
+Run the browser checks against a production build:
+
+```sh
+npx playwright install chromium
+npm run build
+npm run test:e2e
+```
+
+The checks use isolated browser contexts and real public feeds. A network connection is required; failure-state checks deliberately block requests without substituting article data.
+
 ## Architecture
 
 Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4, Base UI and Motion. Newsreader, Inter and JetBrains Mono are bundled locally. The page and metadata are statically generated; no application server, proxy, credentials or database is needed for news fetching.
@@ -39,6 +49,7 @@ Countries: `in`, `us`, `gb`. Sections: general, business, technology, science, h
 - The reader loads real publisher content, supports local search and progressively reveals stories.
 - Editorial exclusions omit entire stories; publisher headlines are never rewritten.
 - Endpoint links and cURL, JavaScript, Python and Go examples follow the selected feed.
+- The API playground includes a copyable live JSON preview of the first visible article. Original response counts are preserved; the complete endpoint remains available.
 - Health reads the manifest every minute while the page is visible. News is checked every two minutes. These checks do not trigger the upstream workflow.
 - Missing metadata remains unavailable. Partial runs, retained feeds, stale manifests and network failures have separate states.
 - Requests are cancellable, time out after 15 seconds and ignore superseded responses.
@@ -51,6 +62,7 @@ Countries: `in`, `us`, `gb`. Sections: general, business, technology, science, h
 - `components/ui/`: reusable editorial components adapted from [Better Design](https://better-design.com/design-systems/cream-editorial), retaining the project's Lucide icons.
 - `hooks/use-resource.ts`: client fetching and refresh lifecycle.
 - `lib/news.ts`: validated response types, endpoint construction and code examples.
+- `tests/`: browser checks for feed synchronization, clipboard, responsive navigation, theme persistence and network recovery.
 
 ## Deployment
 

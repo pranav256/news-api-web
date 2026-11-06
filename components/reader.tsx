@@ -1,10 +1,21 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowDown, ArrowUpRight, Newspaper, RefreshCw, Search, X } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, RefreshCw, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarItem,
+  SidebarFooter,
+} from '@/components/ui/sidebar';
 import { Segmented } from '@/components/controls';
+import { ArticleCard } from '@/components/article-card';
 import {
   CATEGORIES,
   COUNTRIES,
@@ -12,130 +23,10 @@ import {
   exactTime,
   label,
   relativeTime,
-  type Article,
   type NewsFeed,
   type Selection,
   type FeedStatus,
 } from '@/lib/news';
-
-function ArticleImage({ article, eager = false }: { article: Article; eager?: boolean }) {
-  const [broken, setBroken] = useState(false);
-  return (
-    <div className="article-image">
-      {article.image && !broken ? (
-        <img
-          src={article.image}
-          alt=""
-          loading={eager ? 'eager' : 'lazy'}
-          decoding="async"
-          referrerPolicy="no-referrer"
-          onError={() => setBroken(true)}
-        />
-      ) : (
-        <div className="image-fallback">
-          <Newspaper size={36} strokeWidth={1} />
-          <span>{article.publisher}</span>
-        </div>
-      )}
-      <span className="image-open" aria-hidden="true">
-        <ArrowUpRight size={19} />
-      </span>
-    </div>
-  );
-}
-
-function ArticleMeta({ article, now }: { article: Article; now: number }) {
-  return (
-    <div className="article-meta">
-      <span>{article.publisher}</span>
-      <time dateTime={article.publishedAt ?? undefined} title={exactTime(article.publishedAt)}>
-        {relativeTime(article.publishedAt, now)}
-      </time>
-    </div>
-  );
-}
-
-function Story({
-  article,
-  variant,
-  now,
-}: {
-  article: Article;
-  variant: 'lead' | 'secondary' | 'compact' | 'grid';
-  now: number;
-}) {
-  return (
-    <article className={`story story-${variant}`}>
-      <a href={article.url} target="_blank" rel="noopener noreferrer" className="story-link">
-        {variant !== 'compact' && (
-          <ArticleImage key={article.url} article={article} eager={variant === 'lead'} />
-        )}
-        <div className="story-copy">
-          <ArticleMeta article={article} now={now} />
-          <h3>{article.title}</h3>
-          {variant === 'lead' && <p className="story-description">{article.description}</p>}
-          {variant === 'lead' && (
-            <span className="read-story">
-              Read the full story <ArrowUpRight size={15} />
-            </span>
-          )}
-        </div>
-      </a>
-    </article>
-  );
-}
-
-function StorySkeleton({ variant }: { variant: 'lead' | 'secondary' | 'compact' }) {
-  return (
-    <div className={`story story-${variant}`}>
-      {variant !== 'compact' && <Skeleton className="article-image" />}
-      <div className="article-meta">
-        <Skeleton className="ghost-publisher" />
-        <Skeleton className="ghost-time" />
-      </div>
-      <Skeleton className="ghost-heading" />
-      {variant === 'lead' && (
-        <>
-          <Skeleton className="story-description" />
-          <div className="read-story">
-            <Skeleton className="h-4 w-28" />
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-function ReaderSkeleton() {
-  return (
-    <div role="status" aria-label="Loading headlines from the selected feed">
-      <div className="edition-grid reader-skeleton">
-        <StorySkeleton variant="lead" />
-        <div className="secondary-column">
-          <StorySkeleton variant="secondary" />
-          <StorySkeleton variant="secondary" />
-        </div>
-        <div className="briefing-column">
-          <div className="briefing-title">
-            Also in the headlines <span className="mono">—</span>
-          </div>
-          {[0, 1, 2].map((n) => (
-            <StorySkeleton variant="compact" key={n} />
-          ))}
-          <div className="briefing-note">
-            <Skeleton className="ghost-note-title" />
-            <Skeleton className="ghost-note-copy" />
-          </div>
-        </div>
-      </div>
-      <div className="reader-bottom" aria-hidden="true">
-        <Skeleton className="h-4 w-28" />
-        <Skeleton className="h-11 w-32" />
-        <Skeleton className="skeleton-extra h-4 w-28" />
-      </div>
-    </div>
-  );
-}
 
 export function Reader({
   selection,
@@ -159,188 +50,224 @@ export function Reader({
   const [query, setQuery] = useState('');
   const [visible, setVisible] = useState(6);
   useEffect(() => {
-    setVisible(6);
     setQuery('');
-  }, [selection.country, selection.category]);
+    setVisible(6);
+  }, [selection.country, selection.category, selection.format]);
   const articles = useMemo(
     () =>
       (feed?.articles ?? []).filter((article) =>
-        `${article.title} ${article.publisher}`.toLowerCase().includes(query.toLowerCase().trim()),
+        `${article.title} ${article.description ?? ''} ${article.publisher}`
+          .toLowerCase()
+          .includes(query.trim().toLowerCase()),
       ),
     [feed, query],
   );
-  const choose = (value: Partial<Selection>) => {
-    setVisible(6);
-    setQuery('');
-    onSelect(value);
-  };
   const refreshedAt = feed?.fetchedAt ?? status?.refreshedAt;
   return (
-    <section id="reader" className="reader-section" aria-labelledby="reader-title">
-      <div className="section-heading reader-heading">
+    <section id="reader" className="reader-section section-space" aria-labelledby="reader-title">
+      <div className="section-heading">
         <div>
           <h2 id="reader-title">
-            The latest edition<span className="accent-period">.</span>
+            The live edition<span>.</span>
           </h2>
-          <p>Headlines from original sources.</p>
+          <p>Original reporting, across three countries. Pick your perspective.</p>
         </div>
         <Segmented
           label="Country"
           value={selection.country}
-          options={COUNTRIES.map((country) => ({
-            value: country.code,
-            label: country.name,
-            prefix: country.short,
-          }))}
-          onChange={(country) => choose({ country })}
+          options={COUNTRIES.map((country) => ({ value: country.code, label: country.name }))}
+          onChange={(country) => onSelect({ country })}
           className="country-selector"
         />
       </div>
-      <div className="reader-toolbar">
-        <Segmented
-          label="News category"
-          value={selection.category}
-          options={CATEGORIES.map((category) => ({
-            value: category,
-            label: category === 'general' ? 'Top stories' : label(category),
-          }))}
-          onChange={(category) => choose({ category })}
-          className="category-selector"
-        />
-        <label className="search-field">
-          <Search size={16} aria-hidden="true" />
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => {
-              setQuery(event.target.value);
-              setVisible(6);
-            }}
-            placeholder="Search this edition"
-            aria-label="Search headlines and publishers"
-          />
-          {query && (
-            <button type="button" onClick={() => setQuery('')} aria-label="Clear search">
-              <X size={14} />
-            </button>
-          )}
-        </label>
-      </div>
-      <div className="edition-info">
-        <span>
-          <span className="live-dot" />
-          <span>{countryName(selection.country)}</span>
-          <span className="info-divider">/</span>
-          <span>{label(selection.category)}</span>
-          <span className="info-divider">/</span>
-          <span aria-live="polite">{feed ? `${articles.length} stories` : 'Loading edition'}</span>
-        </span>
-        <div>
-          <time title={exactTime(refreshedAt)} dateTime={refreshedAt ?? undefined}>
-            {refreshedAt ? `Updated ${relativeTime(refreshedAt, now)}` : 'Refresh time unavailable'}
-          </time>
-          <Button
-            variant="ghost"
-            size="icon-lg"
-            onClick={refresh}
-            disabled={loading}
-            aria-label="Refresh news"
-            title="Refresh news"
-          >
-            <RefreshCw size={14} className={loading ? 'refreshing' : ''} />
-          </Button>
-        </div>
-      </div>
-      {error && (
-        <div className="inline-error" role="alert">
-          <p>
-            {feed ? 'Showing the last loaded edition. ' : ''}
-            {error}
-          </p>
-          <Button variant="outline" size="lg" onClick={refresh}>
-            Try again
-          </Button>
-        </div>
-      )}
-      <div aria-busy={loading} className="reader-content">
-        {!feed && loading ? (
-          <ReaderSkeleton />
-        ) : articles.length > 0 ? (
-          <>
-            <div className="edition-grid">
-              <Story article={articles[0]} variant="lead" now={now} />
-              <div className="secondary-column">
-                {articles.slice(1, 3).map((article) => (
-                  <Story key={article.url} article={article} variant="secondary" now={now} />
-                ))}
-              </div>
-              <div className="briefing-column">
-                <div className="briefing-title">
-                  Also in the headlines{' '}
-                  <span className="mono">
-                    {String(Math.min(3, Math.max(0, articles.length - 3))).padStart(2, '0')}
-                  </span>
-                </div>
-                {articles.slice(3, 6).map((article) => (
-                  <Story key={article.url} article={article} variant="compact" now={now} />
-                ))}
-                <a
-                  className="briefing-note"
-                  href="https://24x7.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
+      <Card className="reader-shell">
+        <Sidebar className="reader-sidebar h-auto" aria-label="News sections">
+          <SidebarHeader>
+            <span className="reader-edition-name">{countryName(selection.country)}</span>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupLabel>Sections</SidebarGroupLabel>
+              {CATEGORIES.map((category) => (
+                <SidebarItem
+                  key={category}
+                  active={selection.category === category}
+                  onClick={() => onSelect({ category })}
                 >
-                  <span>Make time for the full story.</span>
-                  <span>
-                    Save your reading list on 24x7 <ArrowUpRight size={15} />
-                  </span>
-                </a>
-              </div>
-            </div>
-            {visible > 6 && (
-              <div className="more-stories">
-                {articles.slice(6, visible).map((article) => (
-                  <Story key={article.url} article={article} variant="grid" now={now} />
-                ))}
-              </div>
-            )}
-            <div className="reader-bottom">
-              <span className="small-text">
-                Showing {Math.min(visible, articles.length)} of {articles.length} stories
+                  {category === 'general' ? 'Top stories' : label(category)}
+                </SidebarItem>
+              ))}
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter className="mt-0">
+            <span className="sidebar-note">Stories open at the original publisher.</span>
+          </SidebarFooter>
+        </Sidebar>
+        <div className="reader-main">
+          <div className="reader-toolbar">
+            <div className="reader-feed-title">
+              <span
+                className={`live-dot ${error || status?.status === 'retained' ? 'warning-dot' : ''}`}
+              />
+              <h3>{label(selection.category)}</h3>
+              <span aria-live="polite">
+                {feed ? `${articles.length} stories` : error ? 'Unavailable' : 'Loading'}
               </span>
-              {visible < articles.length && (
+            </div>
+            <label className="search-field">
+              <Search size={17} />
+              <input
+                type="search"
+                placeholder="Search this edition"
+                aria-label="Search headlines and publishers"
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setVisible(6);
+                }}
+              />
+              {query && (
                 <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => setVisible((value) => value + 6)}
+                  size="icon"
+                  variant="ghost"
+                  aria-label="Clear search"
+                  onClick={() => setQuery('')}
                 >
-                  More stories <ArrowDown size={16} />
+                  <X size={16} />
                 </Button>
               )}
-              <span className="small-text">Original reporting. Original sources.</span>
-            </div>
-          </>
-        ) : (
-          !error && (
-            <div className="empty-state">
-              <Search size={28} strokeWidth={1.3} />
-              <h3>{query ? 'No matching stories' : 'No stories in this edition'}</h3>
+            </label>
+            <Button
+              variant="ghost"
+              size="icon-lg"
+              aria-label="Refresh news"
+              title="Refresh news"
+              onClick={refresh}
+              disabled={loading}
+            >
+              <RefreshCw size={17} className={loading ? 'refreshing' : ''} />
+            </Button>
+          </div>
+          <div className="mobile-categories">
+            <Segmented
+              label="News category"
+              value={selection.category}
+              options={CATEGORIES.map((category) => ({
+                value: category,
+                label: category === 'general' ? 'Top stories' : label(category),
+              }))}
+              onChange={(category) => onSelect({ category })}
+            />
+          </div>
+          <div className="edition-freshness">
+            <time title={exactTime(refreshedAt)} dateTime={refreshedAt ?? undefined}>
+              {refreshedAt
+                ? `${status?.status === 'retained' ? 'Retained from' : 'Refreshed'} ${relativeTime(refreshedAt, now)}`
+                : 'Refresh time unavailable'}
+            </time>
+            <a href="#status">
+              View feed health <ArrowUpRight size={14} />
+            </a>
+          </div>
+          {error && (
+            <div role="alert" className="inline-error">
               <p>
-                {query
-                  ? 'Try another headline or publisher.'
-                  : 'Choose another section or check back after the next refresh.'}
+                {feed ? 'Showing the last loaded edition. ' : ''}
+                {error}
               </p>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => (query ? setQuery('') : choose({ category: 'general' }))}
-              >
-                {query ? 'Clear search' : 'Explore top stories'}
+              <Button variant="outline" onClick={refresh}>
+                Try again
               </Button>
             </div>
-          )
-        )}
-      </div>
+          )}
+          <div className="reader-content" aria-busy={loading}>
+            {!feed && loading ? (
+              <div className="reader-loading" role="status" aria-label="Loading headlines">
+                <div className="edition-grid">
+                  <div className="loading-lead">
+                    <Skeleton className="article-photo" />
+                    <Skeleton className="loading-meta" />
+                    <Skeleton className="loading-title" />
+                    <Skeleton className="loading-description" />
+                    <Skeleton className="loading-action" />
+                  </div>
+                  <div className="edition-secondary">
+                    {[0, 1].map((n) => (
+                      <div key={n} className="loading-standard">
+                        <Skeleton className="article-photo" />
+                        <Skeleton className="loading-meta" />
+                        <Skeleton className="loading-title" />
+                        <Skeleton className="loading-action" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="brief-grid">
+                  {[0, 1, 2].map((n) => (
+                    <div key={n} className="loading-brief">
+                      <Skeleton className="loading-meta" />
+                      <Skeleton className="loading-title" />
+                      <Skeleton className="loading-action" />
+                    </div>
+                  ))}
+                </div>
+                <span className="sr-only">Fetching the selected public feed.</span>
+              </div>
+            ) : articles.length ? (
+              <>
+                <div className="edition-grid">
+                  <ArticleCard article={articles[0]} now={now} variant="lead" />
+                  <div className="edition-secondary">
+                    {articles.slice(1, 3).map((article) => (
+                      <ArticleCard key={article.url} article={article} now={now} />
+                    ))}
+                  </div>
+                </div>
+                <div className="brief-grid">
+                  {articles.slice(3, 6).map((article) => (
+                    <ArticleCard key={article.url} article={article} now={now} variant="brief" />
+                  ))}
+                </div>
+                {visible > 6 && (
+                  <div className="more-stories">
+                    {articles.slice(6, visible).map((article) => (
+                      <ArticleCard key={article.url} article={article} now={now} />
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              !error && (
+                <div className="empty-state">
+                  <Search size={30} />
+                  <h3>{query ? 'No matching stories' : 'No stories in this edition'}</h3>
+                  <p>
+                    {query
+                      ? 'Try a different headline or publisher.'
+                      : 'Choose another section, or refresh this feed.'}
+                  </p>
+                  <Button variant="outline" onClick={() => (query ? setQuery('') : refresh())}>
+                    {query ? 'Clear search' : 'Refresh feed'}
+                  </Button>
+                </div>
+              )
+            )}
+          </div>
+          <div className="reader-bottom">
+            <span>
+              {feed
+                ? `Showing ${Math.min(visible, articles.length)} of ${articles.length}`
+                : 'Direct from the public feed'}
+            </span>
+            {visible < articles.length && (
+              <Button variant="outline" size="lg" onClick={() => setVisible((value) => value + 6)}>
+                More stories <ArrowDown size={16} />
+              </Button>
+            )}
+            <span>Publisher access terms apply.</span>
+          </div>
+        </div>
+      </Card>
     </section>
   );
 }

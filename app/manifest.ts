@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'news-api — The open news project',
+    name: 'news-api — The world, in plain JSON.',
     short_name: 'news-api',
     description: 'Live news and public JSON feeds from India, the US, and the UK.',
     start_url: '/',

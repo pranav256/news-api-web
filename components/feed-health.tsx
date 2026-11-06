@@ -81,7 +81,7 @@ export default function FeedHealth({
           <h2 id="health-title">
             Feed health, in the open<span className="accent-period">.</span>
           </h2>
-          <p>Every feed. Every refresh. All out in the open.</p>
+          <p>Published counts and provider results, read directly from the health manifest.</p>
         </div>
         <Button variant="outline" size="lg" onClick={refresh} disabled={loading}>
           <RefreshCw size={15} className={loading ? 'refreshing' : ''} />
@@ -186,16 +186,16 @@ export default function FeedHealth({
                       data-state={selected === feed ? 'selected' : undefined}
                     >
                       <TableCell>
-                        <button
+                        <Button
                           className="feed-select"
-                          type="button"
+                          variant="ghost"
                           onClick={() => setSelectedKey(`${feed.country}/${feed.category}`)}
                           aria-pressed={selected === feed}
                         >
                           <span className="country-code">{feed.country.toUpperCase()}</span>
                           {label(feed.category)}
                           <ArrowUpRight size={13} />
-                        </button>
+                        </Button>
                       </TableCell>
                       <TableCell>
                         <Badge variant={tone(feed.status)}>{label(feed.status)}</Badge>
@@ -224,7 +224,7 @@ export default function FeedHealth({
               >
                 <SidebarHeader className="px-6">
                   <div className="detail-heading w-full">
-                    <span className="mono">FEED DETAILS</span>
+                    <span>Feed details</span>
                     <Badge variant={tone(selected.status)}>{label(selected.status)}</Badge>
                   </div>
                 </SidebarHeader>
@@ -272,7 +272,10 @@ export default function FeedHealth({
                     className="mt-3 min-h-11 border border-(--line-strong) text-center"
                     onClick={() => {
                       onSelect({ country: selected.country, category: selected.category });
-                      window.location.hash = 'reader';
+                      const url = new URL(window.location.href);
+                      url.hash = 'reader';
+                      window.history.replaceState(window.history.state, '', url);
+                      document.getElementById('reader')?.scrollIntoView();
                     }}
                   >
                     Read this feed

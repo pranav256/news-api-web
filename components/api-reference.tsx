@@ -1,136 +1,243 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowUpRight, Braces, ChevronDown } from 'lucide-react';
+import { ArrowUpRight, Braces, Check, ChevronDown } from 'lucide-react';
 import { CopyButton, Segmented } from '@/components/controls';
+import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { endpoint, label, snippet, type Language, type Selection, STATUS_URL } from '@/lib/news';
+import {
+  CATEGORIES,
+  COUNTRIES,
+  endpoint,
+  label,
+  snippet,
+  type Category,
+  type Country,
+  type Language,
+  type NewsFeed,
+  type Selection,
+  ROOT_URL,
+  STATUS_URL,
+} from '@/lib/news';
 
-const languages: { value: Language; label: string }[] = [
+const languages: { value: Language | 'response'; label: string }[] = [
   { value: 'curl', label: 'cURL' },
   { value: 'javascript', label: 'JavaScript' },
   { value: 'python', label: 'Python' },
   { value: 'go', label: 'Go' },
+  { value: 'response', label: 'JSON response' },
 ];
+const searchCategories = ['business', 'health', 'science', 'sports', 'technology'];
 
 export function ApiReference({
   selection,
   onSelect,
+  feed,
+  loading,
+  error,
 }: {
   selection: Selection;
   onSelect: (value: Partial<Selection>) => void;
+  feed: NewsFeed | null;
+  loading: boolean;
+  error: string | null;
 }) {
-  const [language, setLanguage] = useState<Language>('javascript');
+  const [language, setLanguage] = useState<Language | 'response'>('javascript');
   const url = endpoint(selection);
+  const code = (value: Language | 'response') =>
+    value === 'response' ? (feed?.preview ?? '') : snippet(value, url);
+  const searchCategory = searchCategories.includes(selection.category)
+    ? selection.category
+    : 'business';
   return (
-    <section id="docs" className="api-section section-block" aria-labelledby="api-title">
-      <div className="api-intro">
-        <h2 id="api-title">
-          Good stories.
-          <br />
-          <em>Great possibilities.</em>
-        </h2>
-        <p>Public news feeds for your next project.</p>
-        <p className="api-description">No signup. No API key.</p>
+    <section id="docs" className="api-section section-space" aria-labelledby="api-title">
+      <div className="section-heading">
+        <div>
+          <h2 id="api-title">
+            Your next project starts here<span>.</span>
+          </h2>
+          <p>Select a feed. Copy the code. Make it your own.</p>
+        </div>
         <a
-          className="text-link"
           href="https://github.com/pranav256/news-api"
           target="_blank"
           rel="noopener noreferrer"
+          className="text-link"
         >
-          Explore the repository <ArrowUpRight size={16} />
+          Explore the repository <ArrowUpRight size={17} />
         </a>
-        <div className="api-facts">
-          <span>
-            <Braces size={17} /> Plain JSON
-          </span>
-          <span>Open CORS</span>
-          <span>Free to fetch</span>
-        </div>
       </div>
-      <div className="api-workspace" id="endpoints">
-        <div className="endpoint-heading">
-          <span className="mono">YOUR ENDPOINT</span>
-          <Segmented
-            label="Response format"
-            value={selection.format}
-            options={[
-              { value: 'simple', label: 'Standard' },
-              { value: 'rich', label: 'With metadata' },
-            ]}
-            onChange={(format) => onSelect({ format })}
-          />
-        </div>
-        <div className="endpoint-address">
-          <span className="get-method">GET</span>
-          <a href={url} target="_blank" rel="noopener noreferrer">
-            {url}
-          </a>
-          <CopyButton value={url} label="Copy URL" />
-        </div>
-        <div className="endpoint-selection">
-          <span>
-            {selection.country.toUpperCase()}
-            <span className="info-divider">/</span>
-            {label(selection.category)}
-          </span>
-          <a href="#reader">
-            Change feed <ArrowUpRight size={13} />
-          </a>
-        </div>
-        <Tabs
-          value={language}
-          onValueChange={(value) => setLanguage(value as Language)}
-          className="code-window"
-        >
-          <div className="code-toolbar">
-            <TabsList aria-label="Code language">
-              {languages.map((item) => (
-                <TabsTrigger key={item.value} value={item.value}>
-                  {item.label}
-                </TabsTrigger>
+      <Card className="api-studio" id="endpoints">
+        <div className="api-config">
+          <div className="studio-identity">
+            <Braces size={26} strokeWidth={1.5} />
+            <span>API playground</span>
+          </div>
+          <p>
+            One public URL.
+            <br />
+            Any language. Any browser.
+          </p>
+          <label className="studio-field">
+            Country
+            <select
+              aria-label="API country"
+              value={selection.country}
+              onChange={(event) => onSelect({ country: event.target.value as Country })}
+            >
+              {COUNTRIES.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.name}
+                </option>
               ))}
-            </TabsList>
-            <CopyButton value={snippet(language, url)} label="Copy code" />
+            </select>
+          </label>
+          <label className="studio-field">
+            Section
+            <select
+              aria-label="API section"
+              value={selection.category}
+              onChange={(event) => onSelect({ category: event.target.value as Category })}
+            >
+              {CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {label(category)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="format-field">
+            <span>Response format</span>
+            <Segmented
+              label="Response format"
+              value={selection.format}
+              options={[
+                { value: 'simple', label: 'Standard' },
+                { value: 'rich', label: 'With metadata' },
+              ]}
+              onChange={(format) => onSelect({ format })}
+            />
           </div>
-          {languages.map((item) => (
-            <TabsContent key={item.value} value={item.value}>
-              <pre tabIndex={0} aria-label={`${item.label} code example`}>
-                <code>
-                  {snippet(item.value, url)
-                    .split('\n')
-                    .map((line, i) => (
-                      <span className={`code-line ${line.includes(url) ? 'code-url' : ''}`} key={i}>
-                        <span className="line-number" aria-hidden="true">
-                          {i + 1}
-                        </span>
-                        <span>{line || ' '}</span>
-                      </span>
-                    ))}
-                </code>
-              </pre>
-            </TabsContent>
-          ))}
+          <div className="studio-guarantees">
+            <span>
+              <Check size={15} /> No API key
+            </span>
+            <span>
+              <Check size={15} /> Open browser access
+            </span>
+            <span>
+              <Check size={15} /> Static JSON in Git
+            </span>
+          </div>
+        </div>
+        <div className="api-code">
+          <div className="endpoint-address">
+            <span className="method-label">GET</span>
+            <a href={url} target="_blank" rel="noopener noreferrer">
+              {url}
+            </a>
+            <CopyButton value={url} label="Copy URL" />
+          </div>
+          <Tabs
+            value={language}
+            onValueChange={(value) => setLanguage(value as Language | 'response')}
+            className="code-window"
+          >
+            <div className="code-toolbar">
+              <TabsList aria-label="Code language">
+                {languages.map((item) => (
+                  <TabsTrigger key={item.value} value={item.value}>
+                    {item.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              {(language !== 'response' || feed) && (
+                <CopyButton
+                  value={code(language)}
+                  label={language === 'response' ? 'Copy JSON' : 'Copy code'}
+                />
+              )}
+            </div>
+            {languages.map((item) => (
+              <TabsContent key={item.value} value={item.value}>
+                {item.value === 'response' && !feed ? (
+                  <div className="response-state" role="status">
+                    {error
+                      ? 'The response is unavailable. Refresh the live edition to try again.'
+                      : 'Fetching the selected public feed…'}
+                  </div>
+                ) : (
+                  <pre tabIndex={0} aria-label={`${item.label} example`}>
+                    <code>
+                      {code(item.value)
+                        .split('\n')
+                        .map((line, index) => (
+                          <span
+                            className={`code-line ${line.includes(url) ? 'code-url' : ''}`}
+                            key={index}
+                          >
+                            <span className="line-number" aria-hidden="true">
+                              {index + 1}
+                            </span>
+                            <span>{line || ' '}</span>
+                          </span>
+                        ))}
+                    </code>
+                  </pre>
+                )}
+              </TabsContent>
+            ))}
+          </Tabs>
           <div className="code-footer">
-            <span className="code-dot" /> Direct from GitHub to your application.
+            <span className={`live-dot ${error ? 'warning-dot' : ''}`} />
+            {language === 'response'
+              ? 'Live response preview: first visible article. Original feed counts are preserved.'
+              : 'Fetched directly from raw.githubusercontent.com.'}
+            {loading && feed && <span>Refreshing…</span>}
           </div>
-        </Tabs>
-        <details className="schema-details">
+        </div>
+      </Card>
+      <div className="api-notes">
+        <details>
           <summary>
-            What’s in the response? <ChevronDown size={16} />
+            Response fields <ChevronDown size={17} />
           </summary>
           <p>
             {selection.format === 'rich'
-              ? 'The metadata format adds country, category, providers, fetched_at and articles_count alongside the articles array.'
-              : 'The standard format returns status, totalResults and an articles array.'}
+              ? 'Rich feeds include source, country, category, providers, fetched_at, articles_count and articles.'
+              : 'Standard feeds return status, totalResults and articles.'}
           </p>
           <p>
-            Each article includes source, author, title, description, url, urlToImage, publishedAt
-            and content. Missing publisher fields may be null.
+            Articles include source, author, title, description, url, urlToImage, publishedAt and
+            content. Missing publisher values may be null. The reader omits stories covered by its
+            editorial exclusions; the public endpoint remains unchanged.
           </p>
-          <a href={STATUS_URL} target="_blank" rel="noopener noreferrer" className="text-link">
-            Open the health manifest <ArrowUpRight size={14} />
+          <a href={url} target="_blank" rel="noopener noreferrer" className="text-link">
+            Inspect the complete feed <ArrowUpRight size={15} />
           </a>
+        </details>
+        <details>
+          <summary>
+            More endpoints <ChevronDown size={17} />
+          </summary>
+          <p>
+            Deep-search files are published for business, health, science, sports and technology.
+            Search uses the available upstream request budget, with category RSS as a fallback.
+          </p>
+          <a
+            href={`${ROOT_URL}/data/${selection.country}/${searchCategory}_everything.json`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-link"
+          >
+            Open {label(searchCategory)} search JSON <ArrowUpRight size={15} />
+          </a>
+          <a href={STATUS_URL} target="_blank" rel="noopener noreferrer" className="text-link">
+            Open the health manifest <ArrowUpRight size={15} />
+          </a>
+          <p>
+            Countries use in, us or gb. GitHub CDN caching can delay publication after a commit.
+          </p>
         </details>
       </div>
     </section>
