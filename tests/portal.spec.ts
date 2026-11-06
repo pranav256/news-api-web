@@ -120,13 +120,21 @@ test('loading placeholders preserve the reading layout at mobile and desktop wid
     await expect(page.locator('.reader-loading')).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
     const before = await page
-      .locator('#docs')
-      .evaluate((element) => element.getBoundingClientRect().top + scrollY);
+      .locator('#reader .reader-bottom')
+      .evaluate(
+        (element) =>
+          element.getBoundingClientRect().top -
+          document.querySelector('#reader .reader-content')!.getBoundingClientRect().top,
+      );
     release();
     await expect(page.locator('.article-card')).toHaveCount(6);
     const after = await page
-      .locator('#docs')
-      .evaluate((element) => element.getBoundingClientRect().top + scrollY);
+      .locator('#reader .reader-bottom')
+      .evaluate(
+        (element) =>
+          element.getBoundingClientRect().top -
+          document.querySelector('#reader .reader-content')!.getBoundingClientRect().top,
+      );
     expect(Math.abs(after - before)).toBeLessThan(1);
     await page.close();
   }

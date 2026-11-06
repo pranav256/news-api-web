@@ -2,23 +2,9 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { MotionConfig } from 'motion/react';
-import {
-  ArrowDown,
-  ArrowRight,
-  ArrowUpRight,
-  Braces,
-  GitBranch,
-  Github,
-  Globe2,
-  Menu,
-  Rss,
-  X,
-} from 'lucide-react';
+import { ArrowUpRight, Braces, GitBranch, Github, Globe2, Menu, Rss, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Magnetic, ThemeToggle } from '@/components/controls';
-import { ArticlePhoto } from '@/components/article-card';
 import { Reader } from '@/components/reader';
 import { ApiReference } from '@/components/api-reference';
 import FeedHealth from '@/components/feed-health';
@@ -26,9 +12,7 @@ import { useResource } from '@/hooks/use-resource';
 import {
   CATEGORIES,
   COUNTRIES,
-  countryName,
   endpoint,
-  exactTime,
   parseNews,
   parseStatus,
   readSelection,
@@ -38,10 +22,10 @@ import {
 } from '@/lib/news';
 
 const navigation = [
-  { id: 'reader', name: 'Live reader' },
   { id: 'docs', name: 'API playground' },
   { id: 'status', name: 'Feed health' },
   { id: 'architecture', name: 'How it works' },
+  { id: 'reader', name: 'Live reader' },
 ];
 
 export default function NewsPortal() {
@@ -52,7 +36,7 @@ export default function NewsPortal() {
   });
   const [ready, setReady] = useState(false);
   const [now, setNow] = useState(0);
-  const [active, setActive] = useState('reader');
+  const [active, setActive] = useState('docs');
   const [menuOpen, setMenuOpen] = useState(false);
   const news = useResource(endpoint(selection), parseNews, 120000);
   const health = useResource(STATUS_URL, parseStatus, 60000);
@@ -97,8 +81,6 @@ export default function NewsPortal() {
   const feedStatus = health.data?.feeds.find(
     (feed) => feed.country === selection.country && feed.category === selection.category,
   );
-  const heroArticle =
-    news.data?.articles.find((article) => article.image) ?? news.data?.articles[0];
   const overdue = Boolean(
     health.data?.generatedAt && now - Date.parse(health.data.generatedAt) > 6 * 3600000,
   );
@@ -106,8 +88,8 @@ export default function NewsPortal() {
     ['ok', 'success'].includes(health.data?.status ?? '') && !overdue && !health.error;
   return (
     <MotionConfig reducedMotion="user">
-      <a href="#reader" className="skip-link">
-        Skip to news
+      <a href="#docs" className="skip-link">
+        Skip to API playground
       </a>
       <header className="site-header">
         <div className="shell header-inner">
@@ -175,7 +157,7 @@ export default function NewsPortal() {
         </div>
       </header>
       <main>
-        <section className="hero shell" aria-labelledby="page-title">
+        <section className="hero hero-api shell" aria-labelledby="page-title">
           <div className="hero-copy">
             <h1 id="page-title">
               The world,
@@ -183,16 +165,6 @@ export default function NewsPortal() {
               <em>in plain JSON.</em>
             </h1>
             <p>Public news from three countries. No signup or API key.</p>
-            <div className="hero-actions">
-              <Magnetic>
-                <Button asChild size="lg">
-                  <a href="#docs">
-                    Explore the API <ArrowUpRight size={18} />
-                  </a>
-                </Button>
-              </Magnetic>
-            </div>
-            <div className="hero-assurance">Fetch from any browser.</div>
             <div className="hero-facts">
               <div>
                 <strong>{COUNTRIES.length}</strong>
@@ -208,59 +180,6 @@ export default function NewsPortal() {
                 </strong>
                 <span>Scheduled refresh</span>
               </div>
-            </div>
-          </div>
-          <div className="hero-publication">
-            <div className="publication-top">
-              <span>From the public feed</span>
-              <span>{countryName(selection.country)}</span>
-            </div>
-            <Card className="hero-story">
-              {heroArticle ? (
-                <a href={heroArticle.url} target="_blank" rel="noopener noreferrer">
-                  <ArticlePhoto key={heroArticle.url} article={heroArticle} eager />
-                  <div className="hero-story-copy">
-                    <div className="article-meta">
-                      <span>{heroArticle.publisher}</span>
-                      <time
-                        title={exactTime(heroArticle.publishedAt)}
-                        dateTime={heroArticle.publishedAt ?? undefined}
-                      >
-                        {relativeTime(heroArticle.publishedAt, now)}
-                      </time>
-                    </div>
-                    <h2>{heroArticle.title}</h2>
-                    <span className="article-action">
-                      Read the original report <ArrowUpRight size={16} />
-                    </span>
-                  </div>
-                </a>
-              ) : news.loading ? (
-                <div role="status" aria-label="Loading featured story">
-                  <Skeleton className="article-photo" />
-                  <div className="hero-story-copy">
-                    <Skeleton className="loading-meta" />
-                    <Skeleton className="loading-title" />
-                    <Skeleton className="loading-action" />
-                  </div>
-                </div>
-              ) : (
-                <div className="hero-no-story">
-                  <NewspaperPlaceholder />
-                  <h2>
-                    {news.error ? 'The edition is unavailable.' : 'A fresh edition is on its way.'}
-                  </h2>
-                  <a href="#reader" className="text-link">
-                    Choose a feed <ArrowRight size={16} />
-                  </a>
-                </div>
-              )}
-            </Card>
-            <div className="publication-bottom">
-              <span>Original sources. Direct access.</span>
-              <a href="#reader" aria-label="Explore the live reader">
-                <ArrowDown size={19} />
-              </a>
             </div>
           </div>
         </section>
@@ -293,16 +212,6 @@ export default function NewsPortal() {
           </div>
         </div>
         <div className="shell">
-          <Reader
-            selection={selection}
-            onSelect={onSelect}
-            feed={news.data}
-            loading={news.loading}
-            error={news.error}
-            refresh={news.refresh}
-            status={feedStatus}
-            now={now}
-          />
           <ApiReference
             selection={selection}
             onSelect={onSelect}
@@ -383,13 +292,27 @@ export default function NewsPortal() {
               </h2>
               <p>The 24x7 reader saves your reading list in this browser.</p>
             </div>
-            <Button asChild size="lg">
-              <a href="https://24x7.vercel.app" target="_blank" rel="noopener noreferrer">
-                Open the 24x7 reader <ArrowUpRight size={18} />
-              </a>
-            </Button>
+            <Magnetic>
+              <Button asChild size="lg">
+                <a href="https://24x7.vercel.app" target="_blank" rel="noopener noreferrer">
+                  Open the 24x7 reader <ArrowUpRight size={18} />
+                </a>
+              </Button>
+            </Magnetic>
           </div>
         </section>
+        <div className="shell">
+          <Reader
+            selection={selection}
+            onSelect={onSelect}
+            feed={news.data}
+            loading={news.loading}
+            error={news.error}
+            refresh={news.refresh}
+            status={feedStatus}
+            now={now}
+          />
+        </div>
       </main>
       <footer className="site-footer shell">
         <div className="footer-grid">
@@ -458,8 +381,4 @@ export default function NewsPortal() {
       </footer>
     </MotionConfig>
   );
-}
-
-function NewspaperPlaceholder() {
-  return <Braces size={48} strokeWidth={1} aria-hidden="true" />;
 }
