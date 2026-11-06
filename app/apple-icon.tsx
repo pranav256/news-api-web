@@ -1,6 +1,5 @@
 import { ImageResponse } from 'next/og';
 
-export const runtime = 'edge';
 export const size = { width: 180, height: 180 };
 export const contentType = 'image/png';
 
@@ -14,7 +13,7 @@ export default function AppleIcon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#161513',
+          background: '#262923',
           padding: 24,
         }}
       >
@@ -32,7 +31,7 @@ export default function AppleIcon() {
           }}
         >
           <div style={{ height: 12, width: '100%', background: '#f7f4ee', borderRadius: 4 }} />
-          <div style={{ height: 10, width: '65%', background: '#b45309', borderRadius: 3 }} />
+          <div style={{ height: 10, width: '65%', background: '#a34e32', borderRadius: 3 }} />
           <div style={{ height: 8, width: '50%', background: '#a8a29e', borderRadius: 3 }} />
           <div
             style={{
@@ -42,11 +41,11 @@ export default function AppleIcon() {
             }}
           >
             <div style={{ height: 8, width: '40%', background: '#78716c', borderRadius: 3 }} />
-            <div style={{ width: 20, height: 20, background: '#b45309', borderRadius: 4 }} />
+            <div style={{ width: 20, height: 20, background: '#a34e32', borderRadius: 4 }} />
           </div>
         </div>
       </div>
     ),
-    { ...size }
+    { ...size },
   );
 }
