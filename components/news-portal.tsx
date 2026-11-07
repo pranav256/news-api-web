@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { MotionConfig } from 'motion/react';
-import { ArrowUpRight, Braces, GitBranch, Github, Globe2, Menu, Rss, X } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Braces, GitBranch, Github, Globe2, Menu, Rss, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Magnetic, ThemeToggle } from '@/components/controls';
 import { Reader } from '@/components/reader';
@@ -157,7 +157,7 @@ export default function NewsPortal() {
         </div>
       </header>
       <main>
-        <section className="hero hero-api shell" aria-labelledby="page-title">
+        <section className="hero shell" aria-labelledby="page-title">
           <div className="hero-copy">
             <h1 id="page-title">
               The world,
@@ -165,6 +165,13 @@ export default function NewsPortal() {
               <em>in plain JSON.</em>
             </h1>
             <p>Public news from three countries. No signup or API key.</p>
+            <div className="hero-actions">
+              <Button asChild size="lg" role="link">
+                <a href="#docs">
+                  Explore the API <ArrowDown size={17} aria-hidden="true" />
+                </a>
+              </Button>
+            </div>
             <div className="hero-facts">
               <div>
                 <strong>{COUNTRIES.length}</strong>
