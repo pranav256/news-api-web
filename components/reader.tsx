@@ -70,7 +70,7 @@ export function Reader({
           <h2 id="reader-title">
             The live edition<span>.</span>
           </h2>
-          <p>Original reporting, across three countries. Pick your perspective.</p>
+          <p>Original reporting across five countries. Pick your perspective.</p>
         </div>
         <Segmented
           label="Country"

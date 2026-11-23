@@ -236,7 +236,7 @@ export function ApiReference({
             Open the health manifest <ArrowUpRight size={15} />
           </a>
           <p>
-            Countries use in, us or gb. GitHub CDN caching can delay publication after a commit.
+            Countries use in, us, gb, ca, or au. GitHub CDN caching can delay publication after a commit.
           </p>
         </details>
       </div>

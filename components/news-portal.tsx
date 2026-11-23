@@ -164,7 +164,7 @@ export default function NewsPortal() {
               <br />
               <em>in plain JSON.</em>
             </h1>
-            <p>Public news from three countries. No signup or API key.</p>
+            <p>Public news from five countries. No signup or API key.</p>
             <div className="hero-actions">
               <Button asChild size="lg" role="link">
                 <a href="#docs">

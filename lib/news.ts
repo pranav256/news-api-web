@@ -4,6 +4,8 @@ export const COUNTRIES = [
   { code: 'in', name: 'India', short: 'IN' },
   { code: 'us', name: 'United States', short: 'US' },
   { code: 'gb', name: 'United Kingdom', short: 'GB' },
+  { code: 'ca', name: 'Canada', short: 'CA' },
+  { code: 'au', name: 'Australia', short: 'AU' },
 ] as const;
 export const CATEGORIES = [
   'general',

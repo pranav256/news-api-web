@@ -41,7 +41,7 @@ The browser reads public JSON directly from `raw.githubusercontent.com`. A separ
 | News with metadata | `/data/{country}/{category}_headlines.json` |
 | Feed health        | `/data/status.json`                         |
 
-Countries: `in`, `us`, `gb`. Sections: general, business, technology, science, health, sports and entertainment.
+Countries: `in`, `us`, `gb`, `ca`, `au`. Sections: general, business, technology, science, health, sports and entertainment.
 
 ## Reading and building
 

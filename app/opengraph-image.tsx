@@ -52,7 +52,7 @@ export default function OpenGraphImage() {
           color: '#55594f',
         }}
       >
-        <span>3 countries · 21 public feeds · No API key</span>
+        <span>5 countries · 35 public feeds · No API key</span>
         <span>news-api-live.vercel.app</span>
       </div>
     </div>,
