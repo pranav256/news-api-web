@@ -44,7 +44,7 @@ test('live feeds, code, response inspection and reading remain synchronized', as
     .getByRole('group', { name: 'Feed health region' })
     .getByRole('button', { name: 'All regions', exact: true })
     .click();
-  await expect(page.locator('.feed-select')).toHaveCount(21);
+  await expect(page.locator('.feed-select')).toHaveCount(35);
   await page
     .locator('.feed-select')
     .filter({ hasText: /US\s*Technology/ })

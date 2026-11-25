@@ -1668,8 +1668,10 @@ em {
   }
   .country-selector .segment {
     flex: 1;
-    padding-inline: 0.5rem;
+    min-width: 0;
+    padding-inline: 0.25rem;
     font-size: 0.75rem;
+    white-space: normal;
   }
   .reader-main {
     padding: 0.75rem 1.25rem 0;
