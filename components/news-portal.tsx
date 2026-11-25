@@ -183,7 +183,7 @@ export default function NewsPortal() {
               </div>
               <div>
                 <strong>
-                  2<span>h</span>
+                  30<span>min</span>
                 </strong>
                 <span>Scheduled refresh</span>
               </div>
@@ -262,7 +262,7 @@ export default function NewsPortal() {
                 <Rss size={23} strokeWidth={1.5} />
                 <div>
                   <h3>Collect from publishers</h3>
-                  <p>GitHub Actions gathers headline and RSS feeds every two hours.</p>
+                  <p>GitHub Actions gathers headline and RSS feeds every 30 minutes.</p>
                 </div>
               </div>
               <div>

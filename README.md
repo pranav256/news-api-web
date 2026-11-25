@@ -33,7 +33,7 @@ The checks use isolated browser contexts and real public feeds. A network connec
 
 Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4, Base UI and Motion. Newsreader, Inter and JetBrains Mono are bundled locally. The page and metadata are statically generated; no application server, proxy, credentials or database is needed for news fetching.
 
-The browser reads public JSON directly from `raw.githubusercontent.com`. A separate GitHub Actions workflow in the data repository runs every two hours. It deduplicates article URLs and commits the resulting JSON. Failed refreshes retain the last successful files.
+The browser reads public JSON directly from `raw.githubusercontent.com`. A separate GitHub Actions workflow in the data repository requests a refresh every 30 minutes. It deduplicates article URLs and commits the resulting JSON. Failed refreshes retain the last successful files. GitHub may delay or drop scheduled runs.
 
 | Resource           | Path relative to the data repository        |
 | ------------------ | ------------------------------------------- |
