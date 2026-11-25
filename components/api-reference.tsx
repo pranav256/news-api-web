@@ -221,8 +221,9 @@ export function ApiReference({
             More endpoints <ChevronDown size={17} />
           </summary>
           <p>
-            Deep-search files are published for business, health, science, sports and technology.
-            Search uses the available upstream request budget, with category RSS as a fallback.
+            Deep-feed files are published for every category. Production runs use RSS and public
+            publisher listings only, so these files contain the category feed and recent history
+            rather than keyword-search results.
           </p>
           <a
             href={`${ROOT_URL}/data/${selection.country}/${searchCategory}_everything.json`}
@@ -230,7 +231,7 @@ export function ApiReference({
             rel="noopener noreferrer"
             className="text-link"
           >
-            Open {label(searchCategory)} search JSON <ArrowUpRight size={15} />
+            Open {label(searchCategory)} deep-feed JSON <ArrowUpRight size={15} />
           </a>
           <a href={STATUS_URL} target="_blank" rel="noopener noreferrer" className="text-link">
             Open the health manifest <ArrowUpRight size={15} />

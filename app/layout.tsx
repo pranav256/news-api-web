@@ -33,7 +33,7 @@ const mono = localFont({
 });
 const origin = 'https://news-api-live.vercel.app';
 const description =
-  'Read the latest news from India, the US, and the UK. Build with 21 free, public JSON feeds, scheduled every two hours. No API key required.';
+  'Read the latest news from India, the US, the UK, Canada and Australia. Build with 35 free public JSON feeds, scheduled every two hours. No API key required.';
 
 export const viewport: Viewport = {
   width: 'device-width',
