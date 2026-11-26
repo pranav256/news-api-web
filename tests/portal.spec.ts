@@ -1,6 +1,40 @@
 import { test, expect } from '@playwright/test';
+import { CATEGORIES, COUNTRIES } from '../lib/news';
 
-test('live feeds, code, response inspection and reading remain synchronized', async ({ page }) => {
+test.beforeEach(async ({ context }) => {
+  await context.route('https://raw.githubusercontent.com/**', (route) => {
+    const parts = new URL(route.request().url()).pathname.split('/');
+    const country = parts.at(-2);
+    const category = parts.at(-1)!.replace(/(?:_headlines)?\.json$/, '');
+    return route.fulfill({
+      json:
+        category === 'status'
+          ? {
+              status: 'ok',
+              feeds: COUNTRIES.flatMap(({ code }) =>
+                CATEGORIES.map((category) => ({
+                  country: code,
+                  category,
+                  status: 'updated',
+                  articles_count: 12,
+                })),
+              ),
+            }
+          : {
+              country,
+              category,
+              articles: Array.from({ length: 12 }, (_, index) => ({
+                title: `Regional report ${index + 1}`,
+                description: 'A local transport update from the fixture edition.',
+                url: `https://publisher.example/${country}/${category}/${index + 1}`,
+                source: { name: 'Fixture Gazette' },
+              })),
+            },
+    });
+  });
+});
+
+test('feed selections, code, response inspection and reading remain synchronized', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
@@ -103,18 +137,18 @@ test('a blocked connection shows actionable errors without fabricated stories', 
 });
 
 test('loading placeholders preserve the reading layout at mobile and desktop widths', async ({
-  browser,
+  context,
 }) => {
   for (const width of [390, 1440]) {
-    const page = await browser.newPage({ viewport: { width, height: 1000 } });
+    const page = await context.newPage();
+    await page.setViewportSize({ width, height: 1000 });
     let release!: () => void;
     const gate = new Promise<void>((resolve) => {
       release = resolve;
     });
     await page.route('https://raw.githubusercontent.com/**/in/general.json', async (route) => {
-      const response = await route.fetch();
       await gate;
-      await route.fulfill({ response });
+      await route.fallback();
     });
     await page.goto('http://127.0.0.1:3102');
     await expect(page.locator('.reader-loading')).toBeVisible();
