@@ -39,7 +39,7 @@ export function ArticleCard({
   return (
     <article className={`article-card article-${variant}`}>
       <a href={article.url} target="_blank" rel="noopener noreferrer" className="article-link">
-        {variant !== 'brief' && <ArticlePhoto key={article.url} article={article} />}
+        {variant !== 'brief' && <ArticlePhoto key={article.image} article={article} />}
         <div className="article-copy">
           <div className="article-meta">
             <span>{article.publisher}</span>

@@ -27,7 +27,7 @@ npm run build
 npm run test:e2e
 ```
 
-The checks use isolated browser contexts and real public feeds. A network connection is required; failure-state checks deliberately block requests without substituting article data.
+The checks use isolated browser contexts and local feed/image fixtures; no connection to public feeds is required. Failure-state checks deliberately block requests.
 
 ## Architecture
 
